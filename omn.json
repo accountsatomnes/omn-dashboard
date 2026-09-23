@@ -1,0 +1,33 @@
+{
+  "_readme": "Per-note data for the OMN dashboard at /mining/. Before the commencement date every figure stays null and the page shows its pending state. From commencement, a daily job fills this file from the pool account the notes' hashrate is delivered to and from the custodian's balances. status is structuring, live or matured. Dates are ISO YYYY-MM-DD in UTC. asOf is the last UTC day included in the figures; the page counts days left from the day after it. btcPerNote is cumulative Bitcoin per note: mined is Bitcoin mined with the notes' hashrate, gross of pool fees (the pool payout plus the issuer's Mining Pool Fees Reimbursements); substitute is Hashrate Substitute BTC paid by the Hashrate Aggregator in place of undelivered hashrate. Per-note figures are divided by notesOutstanding after any Additional Tranche Accrued BTC is added, so every note carries the same figure. totalBtc is the Bitcoin Mining Custody Account balance. history is an ascending array with one entry per UTC day from the commencement date to asOf: {\"date\":\"YYYY-MM-DD\",\"mined\":n,\"substitute\":n,\"hashratePh\":n,\"priceUsd\":n,\"hashpriceUsd\":n}, where mined and substitute are cumulative BTC per note, hashratePh is total hashrate delivered that day, and priceUsd is that day's Bitcoin closing price and hashpriceUsd is that day's Omnes Hashprice Index in USD per PH/s per day, used for the value history when hashpriceIndex.source is \"Omnes Hashprice Index\". hashpriceIndex names the index and holds its latest published value for the record; current value uses the Omnes Hashprice Index the page computes live from public chain data (see the dashboard's Method). termDays is the term length, 730 days, counting both the commencement and maturity dates. tranches lists each issue: name, issueDate, notes, hashratePh, issuePriceUsd. expectedFirstIssueDate is shown until the first tranche's issueDate is set.",
+  "series": "OMN Series 1",
+  "status": "structuring",
+  "asOf": null,
+  "expectedFirstIssueDate": "2026-11-01",
+  "commencementDate": null,
+  "maturityDate": null,
+  "termDays": 730,
+  "hashrateUnderlyingPerNotePh": 1,
+  "notesOutstanding": null,
+  "hashrateDeliveredPh": null,
+  "totalBtc": null,
+  "hashpriceIndex": {
+    "source": "Omnes Hashprice Index",
+    "usdPerPhDay": null,
+    "asOf": null
+  },
+  "btcPerNote": {
+    "mined": null,
+    "substitute": null
+  },
+  "history": [],
+  "tranches": [
+    {
+      "name": "Series 1",
+      "issueDate": null,
+      "notes": null,
+      "hashratePh": null,
+      "issuePriceUsd": null
+    }
+  ]
+}
