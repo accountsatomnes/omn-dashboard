@@ -103,9 +103,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 164px; }
 .kv .k { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); }
 .kv .v { font-weight: 500; text-align: right; white-space: nowrap; }
 .kv .v.long { white-space: normal; }
-/* a fact's explanation, set under its label rather than hidden behind an info icon */
-.kv .k:has(.k-note) { flex-direction: column; align-items: flex-start; gap: 3px; }
-.kv .k-note { display: block; max-width: 34ch; font-size: 12px; line-height: 1.45; color: var(--quiet, #6b737b); text-wrap: pretty; }
+/* the info icons: solid light blue with a white i; the explanation pops up on hover, focus or tap */
+.kv .i { position: relative; cursor: help; background: var(--accent, #2f6bff); color: #fff; outline-offset: 2px; }
+.kv .i .tip { display: none; position: absolute; z-index: 30; left: -8px; top: calc(100% + 9px); width: max-content; max-width: 250px; padding: 9px 11px; border-radius: 10px; background: #17191c; color: #fff; font-size: 12px; font-weight: 400; line-height: 1.45; text-align: left; white-space: normal; box-shadow: 0 10px 30px -12px rgba(23, 25, 28, .45); pointer-events: none; }
+.kv .i .tip::before { content: ""; position: absolute; left: 12px; top: -5px; width: 10px; height: 10px; background: #17191c; transform: rotate(45deg); border-radius: 2px; }
+.kv .i:hover .tip, .kv .i:focus .tip, .kv .i:focus-visible .tip { display: block; }
 
 .kv .v small { display: block; margin-top: 1px; font-size: 12px; font-weight: 400; color: var(--muted); }
 
