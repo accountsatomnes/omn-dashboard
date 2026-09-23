@@ -295,7 +295,7 @@
           </dl>
           <div class="method-note">
             <h3>The Omnes Hashprice Index</h3>
-            <p>Our own measure of what one petahash per second of hashrate earns in a day. It is computed in the page from public Bitcoin network data, refreshed every minute: the block subsidy and the average fees per block over the last 144 blocks, which is one day at the target block time; the three-day network hashrate estimate from mempool.space; and the Bitcoin price from mempool.space. It is an estimate for information only.</p>
+            <p>Our own measure of what one petahash per second of hashrate earns in a day. It is computed in the page from public Bitcoin network data, refreshed every minute: the block subsidy and the average fees per block over the last 144 blocks, which is one day at the target block time; the network hashrate estimated by mempool.space over the last 1,008 blocks, about seven days; and the Bitcoin price from mempool.space. It is an estimate for information only.</p>
           </div>
         </div>
       </div>
@@ -706,7 +706,7 @@
       put("nPrice", p ? money(p, 0) : "Unavailable");
       var pf = $("nPriceF"); if (p && dayAgo) { var c = (p / dayAgo - 1) * 100; pf.textContent = signed(c, 2) + "% in 24 hours"; pf.className = c >= 0 ? "up" : "dn"; } else pf.textContent = "";
       put("nCap", p && height ? compact(p * supplyAt(height)) : "Unavailable"); put("nCapF", height ? fmt(supplyAt(height), 0) + " BTC issued" : "");
-      put("nHash", hs ? fmt(hs / 1e18, 2) + " EH/s" : "Unavailable"); put("nHashF", hs ? "Three-day estimate" : "");
+      put("nHash", hs ? fmt(hs / 1e18, 2) + " EH/s" : "Unavailable"); put("nHashF", hs ? "Seven-day estimate" : "");
       put("nMined", netDay !== null ? fmt(netDay, 1) + " BTC" : "Unavailable");
       put("nDiff", diff ? fmt(diff / 1e12, 2) + " T" : "Unavailable"); put("nDiffF", subsidy !== null ? "Subsidy " + fmt(subsidy, 3) + " BTC" : "");
       if (adj && num(adj.difficultyChange)) { put("nAdj", signed(adj.difficultyChange, 2) + "%"); put("nAdjF", fmt(adj.remainingBlocks, 0) + " blocks, about " + fmt(adj.remainingTime / DAY, 1) + " days"); } else { put("nAdj", "Unavailable"); put("nAdjF", ""); }
