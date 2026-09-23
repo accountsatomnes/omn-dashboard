@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<script>(function(){var d=document.documentElement,a=false;try{a=!!localStorage.getItem('omnes_access_agreed');}catch(e){}if(!a){try{a=!!sessionStorage.getItem('omnes_gate');}catch(e){}}if(/[?&]gate=1(&|$)/.test(location.search))a=false;d.classList.add(a?'omnes-agreed':'omnes-gate-pending');})();</script>
+<title>Omnes | Mining Note dashboard</title>
+<meta name="description" content="The Omnes Mining Note dashboard: Bitcoin per note, current value, the term, series and tranches, and live Bitcoin network figures.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://mempool.space" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..500;1,8..60,300..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/dashboard.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- SHELL: nav, one floating capsule -->
+<header class="nav">
+  <div class="nav-bar">
+    <a class="nav-logo" href="https://omnes.io/" aria-label="Omnes, home"><img src="/omnes-logo-black.svg" alt="" width="83" height="19"></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="https://omnes.io/omn/">Mining Note</a>
+      <a href="/" aria-current="page">Dashboard</a>
+      <a href="https://omnes.io/resources/">Resources</a>
+      <a href="https://omnes.io/about/">About</a>
+      <a class="opt" href="https://omnes.io/faqs/">FAQs</a>
+      <a class="opt" href="https://omnes.io/contact/">Contact</a>
+    </nav>
+    <div class="nav-end">
+      <a class="pill" href="https://omnes.io/login/">Log in</a>
+      <a class="pill pill-accent" href="https://omnes.io/signup/">Sign up</a>
+    </div>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+      <svg class="bars" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
+      <svg class="x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="Menu" hidden>
+  <a href="https://omnes.io/omn/">Mining Note</a>
+  <a href="/" aria-current="page">Dashboard</a>
+  <a href="https://omnes.io/resources/">Resources</a>
+  <a href="https://omnes.io/about/">About</a>
+  <a href="https://omnes.io/faqs/">FAQs</a>
+  <a href="https://omnes.io/contact/">Contact</a>
+  <div class="menu-actions">
+    <a class="btn btn-light" href="https://omnes.io/login/">Log in</a>
+    <a class="btn btn-accent" href="https://omnes.io/signup/">Sign up</a>
+  </div>
+</nav>
+<!-- /SHELL: nav -->
+
+<main id="main" class="dash-page">
+  <div class="subnav-wrap">
+    <nav class="subnav" aria-label="Dashboard sections">
+      <a href="#note" aria-current="location">Overview</a>
+      <a href="#series">Series</a>
+      <a href="#network">Network</a>
+    </nav>
+  </div>
+
+  <!-- Overview: the head and the product window. Per-note figures come from omn.json and read
+       Pending until first issue; network figures and the Omnes Hashprice Index are live. -->
+  <section class="dash-top" id="note">
+    <div class="wrap">
+      <h1 class="dash-title">Omnes Mining Note</h1>
+      <p class="lead">Bitcoin mined for each note, what the note is worth on today's figures, and the live network numbers behind both.</p>
+      <dl class="figs num">
+        <div><dt>Notes outstanding</dt><dd id="cNotes"><span class="sk w3"></span></dd></div>
+        <div><dt>Hashrate delivered</dt><dd id="cHash"><span class="sk"></span></dd></div>
+        <div><dt>Bitcoin held</dt><dd id="cHeld"><span class="sk"></span></dd></div>
+      </dl>
+
+      <div class="window dash-window">
+        <div class="window-bar">
+          <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+          <span class="wb-label">Series 1, Tranche 1</span>
+          <span class="live"><span class="dot wait" id="statusDot"></span><span id="statusText">Connecting</span></span>
+        </div>
+        <h2 class="vh">Note figures</h2>
+        <div class="dash">
+
+          <!-- left: facts -->
+          <div class="d-over">
+            <div class="col-top">
+              <div class="tabs" role="tablist" aria-label="Note facts">
+                <button type="button" role="tab" aria-selected="true" aria-controls="t-over" id="b-over">Overview</button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="t-struct" id="b-struct" tabindex="-1">Structure</button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="t-cust" id="b-cust" tabindex="-1">Custody</button>
+              </div>
+            </div>
+            <ul class="kv num" role="tabpanel" id="t-over" aria-labelledby="b-over">
+              <li><span class="k">Bitcoin per note <span class="i" tabindex="0" role="img" aria-label="Bitcoin mined with the notes' hashrate, gross of pool fees, plus any Bitcoin paid in place of hashrate, divided by notes outstanding." title="Bitcoin mined with the notes' hashrate, gross of pool fees, plus any Bitcoin paid in place of hashrate, divided by notes outstanding.">i</span></span><span class="v" id="oPerNote"><span class="sk"></span></span></li>
+              <li><span class="k">Mined</span><span class="v" id="oMined"><span class="sk"></span></span></li>
+              <li><span class="k">Paid in place of hashrate <span class="i" tabindex="0" role="img" aria-label="Bitcoin paid by the Hashrate Aggregator for hashrate it did not deliver." title="Bitcoin paid by the Hashrate Aggregator for hashrate it did not deliver.">i</span></span><span class="v" id="oSubst"><span class="sk"></span></span></li>
+              <li><span class="k">Current value per note <span class="i" tabindex="0" role="img" aria-label="Bitcoin per note × Bitcoin price, plus days left × Omnes Hashprice Index × 1 PH/s." title="Bitcoin per note × Bitcoin price, plus days left × Omnes Hashprice Index × 1 PH/s.">i</span></span><span class="v" id="oValue"><span class="sk"></span></span></li>
+              <li><span class="k">Current value, all notes</span><span class="v" id="oValueAll"><span class="sk"></span></span></li>
+              <li><span class="k">Omnes Hashprice Index <span class="i" tabindex="0" role="img" aria-label="Our own index of what 1 PH/s of hashrate earns in a day, computed live from public Bitcoin network data. See Method." title="Our own index of what 1 PH/s of hashrate earns in a day, computed live from public Bitcoin network data. See Method.">i</span></span><span class="v" id="oHashprice"><span class="sk"></span></span></li>
+              <li><span class="k">Bitcoin price</span><span class="v" id="oPrice"><span class="sk"></span></span></li>
+              <li><span class="k">Days left in term</span><span class="v" id="oDaysLeft"><span class="sk w3"></span></span></li>
+            </ul>
+            <ul class="kv num" role="tabpanel" id="t-struct" aria-labelledby="b-struct" hidden>
+              <li><span class="k">Issuer <span class="i" tabindex="0" role="img" aria-label="A Luxembourg unregulated securitisation fund." title="A Luxembourg unregulated securitisation fund.">i</span></span><span class="v">Omnes Securities Fund</span></li>
+              <li><span class="k">Series 1, Tranche 1</span><span class="v">US$50,000,000</span></li>
+              <li><span class="k">First issue</span><span class="v" id="sIssue"><span class="sk"></span></span></li>
+              <li><span class="k">Hashrate per note</span><span class="v" id="sPerPh"><span class="sk"></span></span></li>
+              <li><span class="k">Term</span><span class="v" id="sTerm"><span class="sk"></span></span></li>
+              <li><span class="k">Maturity</span><span class="v" id="sEnd"><span class="sk"></span></span></li>
+              <li><span class="k">Distribution</span><span class="v">Bitcoin at maturity</span></li>
+              <li><span class="k">Costs</span><span class="v">3.75% of invested capital</span></li>
+              <li><span class="k">Reporting</span><span class="v">Quarterly, to noteholders</span></li>
+            </ul>
+            <ul class="kv" role="tabpanel" id="t-cust" aria-labelledby="b-cust" hidden>
+              <li><span class="k">Custodian</span><span class="v">Coinbase Luxembourg S.A.</span></li>
+              <li><span class="k">Security agent</span><span class="v long">Apex Corporate Trustees (UK) Limited</span></li>
+              <li><span class="k">Corporate services</span><span class="v">Apex Fund Services S.A.</span></li>
+              <li><span class="k">Tokenisation</span><span class="v">Tokeny S.à r.l.</span></li>
+              <li><span class="k">Hashrate aggregator <span class="i" tabindex="0" role="img" aria-label="An Omnes affiliate." title="An Omnes affiliate.">i</span></span><span class="v">Omnes Technology AG</span></li>
+              <li><span class="k">Hashprice index</span><span class="v">Omnes Hashprice Index</span></li>
+              <li><span class="k">Register of title</span><span class="v">Kept by the issuer</span></li>
+              <li><span class="k">Onchain mirror</span><span class="v">Base</span></li>
+            </ul>
+          </div>
+
+          <!-- centre: chart -->
+          <div class="d-chart">
+            <div class="col-top">
+              <div class="tabs" role="tablist" aria-label="Chart">
+                <button type="button" role="tab" aria-selected="true" data-series="btc">Bitcoin per note</button>
+                <button type="button" role="tab" aria-selected="false" data-series="value" tabindex="-1">Current value</button>
+                <button type="button" role="tab" aria-selected="false" data-series="hash" tabindex="-1">Hashrate delivered</button>
+              </div>
+            </div>
+            <div class="chart-head">
+              <div>
+                <div class="chart-big num" id="chartBig"><span class="sk"></span></div>
+                <div class="chart-sub" id="chartSub">&nbsp;</div>
+              </div>
+              <div class="tools">
+                <div class="seg" role="group" aria-label="Range">
+                  <button type="button" data-days="30" aria-pressed="false" disabled>1M</button>
+                  <button type="button" data-days="90" aria-pressed="false" disabled>3M</button>
+                  <button type="button" data-days="0" aria-pressed="true" disabled>All</button>
+                </div>
+                <button class="icon-btn" type="button" aria-label="Download the daily figures as CSV" data-csv="note" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+              </div>
+            </div>
+            <div class="chart" id="chart">
+              <div class="chart-plot" id="chartPlot"></div>
+              <div class="chart-empty" id="chartEmpty"><span id="chartEmptyText">Loading</span></div>
+            </div>
+            <div class="legend" id="legend"></div>
+          </div>
+
+          <!-- right: per note or all notes -->
+          <div class="d-card">
+            <div class="col-top">
+              <div class="seg seg-full" role="tablist" aria-label="Scope">
+                <button type="button" role="tab" aria-selected="true" data-scope="note">Per note</button>
+                <button type="button" role="tab" aria-selected="false" data-scope="all" tabindex="-1">All notes</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="metric">
+                <span class="lbl" id="fBtcLbl">Bitcoin held per note</span>
+                <div class="val num"><span id="fBtc"><span class="sk"></span></span><small>BTC</small></div>
+                <div class="under num" id="fBtcSub">&nbsp;</div>
+              </div>
+              <div class="metric">
+                <span class="lbl" id="fValLbl">Current value per note</span>
+                <div class="val num"><span id="fVal"><span class="sk"></span></span><small>USD</small></div>
+                <div class="under" id="fValSub">Bitcoin held at today's price, plus the days left at the Omnes Hashprice Index</div>
+              </div>
+              <div class="metric">
+                <div class="term-top"><b class="num" id="kTerm"><span class="sk"></span></b><span class="num" id="kTermPct">&nbsp;</span></div>
+                <div class="bar-track" id="kBar" role="progressbar" aria-label="Share of term elapsed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="kBarFill"></i></div>
+                <div class="term-dates num"><span id="kStart">Commencement</span><span id="kEnd">Maturity</span></div>
+              </div>
+              <details class="breakdown" open>
+                <summary>Value breakdown</summary>
+                <div class="row num"><span id="bBtc">Bitcoin held × Bitcoin price</span><span id="bBtcV"><span class="sk"></span></span></div>
+                <div class="row num"><span id="bDays">Days left × Omnes Hashprice Index ×&nbsp;1&nbsp;PH/s</span><span id="bDaysV"><span class="sk"></span></span></div>
+                <div class="row total num"><span>Current value</span><span id="bTot"><span class="sk"></span></span></div>
+              </details>
+              <button class="btn btn-dark cta" type="button" data-csv="note" disabled>Download CSV <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+              <div class="asof" id="asOf">&nbsp;</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Series and tranches: built from omn.json's tranches; the series row expands its tranches -->
+  <section class="dash-sec" id="series">
+    <div class="wrap">
+      <div class="dsec-head">
+        <h2 class="dash-h2">Series and tranches</h2>
+        <dl class="figs num">
+          <div><dt>Notes</dt><dd id="tNotes"><span class="sk w3"></span></dd></div>
+          <div><dt>Hashrate</dt><dd id="tHash"><span class="sk"></span></dd></div>
+          <div><dt>Tranche 1</dt><dd>US$50M</dd></div>
+        </dl>
+      </div>
+      <div class="dpanel">
+        <div class="tbl-scroll" tabindex="0" role="region" aria-label="Series and tranches, scrolls sideways">
+          <table class="series-table num">
+            <thead><tr><th scope="col">Series</th><th scope="col">Issued</th><th scope="col">Hashrate</th><th scope="col">Notes</th><th scope="col">Issue price</th><th scope="col">Issue price per PH/s per day</th><th scope="col">Bitcoin per note</th><th scope="col">Days left</th></tr></thead>
+            <tbody id="seriesBody"><tr><td colspan="8"><span class="sk"></span></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Network, method, disclosures: live chain figures from mempool.space and the Omnes
+       Hashprice Index computed from them -->
+  <section class="dash-sec" id="network">
+    <div class="wrap">
+      <div class="dsec-head">
+        <div>
+          <h2 class="dash-h2">Network and method</h2>
+          <p class="lead">Live Bitcoin network figures from mempool.space, refreshed every minute, with the method and disclosures behind this dashboard.</p>
+        </div>
+        <div class="seg" role="tablist" aria-label="Network, method and disclosures">
+          <button type="button" role="tab" aria-selected="true" aria-controls="d-net" id="db-net">Network</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="d-method" id="db-method" tabindex="-1">Method</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="d-disc" id="db-disc" tabindex="-1">Disclosures</button>
+        </div>
+      </div>
+
+      <div role="tabpanel" id="d-net" aria-labelledby="db-net">
+        <div class="stats num">
+          <div class="stat stat-index">
+            <span>Omnes Hashprice Index</span>
+            <div class="hp-pair">
+              <div><b id="nHp"><span class="sk"></span></b><small>USD per PH/s per day</small></div>
+              <div><b id="nHpBtc"><span class="sk"></span></b><small>BTC per PH/s per day</small></div>
+            </div>
+            <small class="hp-note">Our index, from public chain data</small>
+          </div>
+          <div class="stat"><span>Bitcoin</span><b id="nPrice"><span class="sk"></span></b><small id="nPriceF">&nbsp;</small></div>
+          <div class="stat"><span>Market cap</span><b id="nCap"><span class="sk"></span></b><small id="nCapF">&nbsp;</small></div>
+          <div class="stat"><span>Network hashrate</span><b id="nHash"><span class="sk"></span></b><small id="nHashF">&nbsp;</small></div>
+          <div class="stat"><span>Mined per day, network</span><b id="nMined"><span class="sk"></span></b><small>144 blocks at today's reward</small></div>
+          <div class="stat"><span>Difficulty</span><b id="nDiff"><span class="sk"></span></b><small id="nDiffF">&nbsp;</small></div>
+          <div class="stat"><span>Next adjustment</span><b id="nAdj"><span class="sk"></span></b><small id="nAdjF">&nbsp;</small></div>
+          <div class="stat"><span>Block height</span><b id="nHeight"><span class="sk"></span></b><small id="nHeightF">&nbsp;</small></div>
+          <div class="stat"><span>Fees, share of reward</span><b id="nFees"><span class="sk"></span></b><small id="nFeesF">&nbsp;</small></div>
+        </div>
+
+        <div class="dpanel hd">
+          <div class="hd-head">
+            <h3>Hashrate and difficulty</h3>
+            <div class="hd-tools">
+              <div class="seg" role="group" aria-label="Hashrate and difficulty range">
+                <button type="button" data-period="3m" aria-pressed="false">3M</button>
+                <button type="button" data-period="6m" aria-pressed="false">6M</button>
+                <button type="button" data-period="1y" aria-pressed="true">1Y</button>
+                <button type="button" data-period="2y" aria-pressed="false">2Y</button>
+                <button type="button" data-period="3y" aria-pressed="false">3Y</button>
+                <button type="button" data-period="all" aria-pressed="false">All</button>
+              </div>
+              <button class="icon-btn" type="button" id="hdCsv" aria-label="Download hashrate and difficulty as CSV"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+            </div>
+          </div>
+          <div class="legend"><span><i style="background:rgba(47,107,255,.28)"></i>Hashrate</span><span><i style="background:#2f6bff"></i>Hashrate, 7-day average</span><span><i style="background:#5f666e"></i>Difficulty, right axis</span></div>
+          <div class="hd-box" id="hdBox" tabindex="0" role="img" aria-label="Bitcoin network hashrate and difficulty. Use the arrow keys to read values by day.">
+            <canvas id="hdCanvas"></canvas>
+            <div class="hd-tip" id="hdTip" hidden></div>
+            <div class="hd-empty" id="hdEmpty">Loading</div>
+          </div>
+          <div class="brush" id="hdBrush" title="Drag the window or its edges to zoom. Double-click to reset.">
+            <canvas id="hdBrushCanvas" aria-hidden="true"></canvas>
+            <div class="brush-win" id="hdWin"><span class="h l" data-edge="l"></span><span class="h r" data-edge="r"></span></div>
+          </div>
+          <p class="hd-note" id="hdNote" aria-live="polite">Loading</p>
+        </div>
+      </div>
+
+      <div role="tabpanel" id="d-method" aria-labelledby="db-method" hidden>
+        <div class="formula">
+          <div class="formula-bar"><b>How the figures are calculated</b><span>Per note</span></div>
+          <dl>
+            <dt>Current value</dt><dd>Bitcoin per note × Bitcoin price, plus days left in term × Omnes Hashprice Index × 1 PH/s</dd>
+            <dt>Bitcoin per note</dt><dd>(Mined, gross of pool fees, plus paid in place of hashrate) ÷ notes outstanding</dd>
+            <dt>Term</dt><dd>730 days, counting the first and last day</dd>
+            <dt>Omnes Hashprice Index</dt><dd>144 × (block subsidy + average fees per block, last 144 blocks) ÷ network hashrate in PH/s × Bitcoin price, in USD per PH/s per day. Without the Bitcoin price, the same figure in BTC per PH/s per day.</dd>
+          </dl>
+          <div class="method-note">
+            <h3>The Omnes Hashprice Index</h3>
+            <p>Our own measure of what one petahash per second of hashrate earns in a day. It is computed in the page from public Bitcoin network data, refreshed every minute: the block subsidy and the average fees per block over the last 144 blocks, which is one day at the target block time; the three-day network hashrate estimate from mempool.space; and the Bitcoin price from mempool.space. It is an estimate for information only.</p>
+          </div>
+        </div>
+      </div>
+
+      <div role="tabpanel" id="d-disc" aria-labelledby="db-disc" hidden>
+        <div class="disc">
+          <p>Current value per note is an indicative calculation. It assumes today's Omnes Hashprice Index level holds for the rest of the term, which it will not, it is before any Costs or tax liabilities still to be paid, and it is not a price at which notes can be bought or sold. Returns are not guaranteed, and investors can lose some or all of their investment.</p>
+          <p>OMN is not offered to US persons. Its offering documentation is available only to eligible professional investors, and noteholders receive the issuer's quarterly reports.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- SHELL: footer -->
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-cols">
+      <div class="foot-lead">
+        <img src="/omnes-logo-white.svg" alt="Omnes" width="88" height="20">
+        <p>Omnes structures compute assets into tokenized debt instruments for professional investors.</p>
+      </div>
+      <nav aria-labelledby="fProduct"><h2 id="fProduct">Product</h2><a href="https://omnes.io/omn/">Omnes Mining Note</a><a href="/">Dashboard</a><a href="https://omnes.io/login/">Investor portal</a><a href="https://omnes.io/signup/">Sign up</a></nav>
+      <nav aria-labelledby="fResources"><h2 id="fResources">Resources</h2><a href="https://omnes.io/resources/">Resources</a><a href="https://omnes.io/faqs/">FAQs</a><a href="https://insights.omnes.io" target="_blank" rel="noopener">Insights</a><a href="https://omnes.io/media-kit/">Media kit</a></nav>
+      <nav aria-labelledby="fCompany"><h2 id="fCompany">Company</h2><a href="https://omnes.io/about/">About</a><a href="https://omnes.io/contact/">Contact</a><a href="https://www.linkedin.com/company/omnesfinance" target="_blank" rel="noopener">LinkedIn</a><a href="https://x.com/omnesfinance" target="_blank" rel="noopener">X</a></nav>
+      <nav aria-labelledby="fLegal"><h2 id="fLegal">Legal</h2><a href="https://omnes.io/website-terms/">Website terms</a><a href="https://omnes.io/global-privacy-notice/">Privacy notice</a><a href="https://omnes.io/cookies-policy/">Cookies policy</a></nav>
+    </div>
+    <div class="foot-legal">
+      <p>This website and the information on it are subject to our Website Terms. It does not take into account any prospective investor's individual investment objectives, financial situation or needs, and it is not legal, tax, investment or accounting advice. Investments are speculative and involve a high degree of risk. Past performance is not indicative of future results, and no assurance can be given that an investment product's objectives will be achieved or that investors will receive any return of capital. Omnes products are not offered to US persons.</p>
+      <p>Copyright Omnes 2024 to 2026. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+<!-- /SHELL: footer -->
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var num = function (v) { return typeof v === "number" && isFinite(v); };
+  var fmt = function (v, d) { return v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); };
+  var money = function (v, d) { return "$" + fmt(v, d || 0); };
+  var signed = function (v, d) { return (v > 0 ? "+" : v < 0 ? "−" : "") + fmt(Math.abs(v), d); };
+  var compact = function (v) { return v >= 1e12 ? "$" + fmt(v / 1e12, 2) + "T" : v >= 1e9 ? "$" + fmt(v / 1e9, 2) + "B" : v >= 1e6 ? "$" + fmt(v / 1e6, 2) + "M" : money(v, 0); };
+  var count = function (v) { return fmt(v, v % 1 ? 4 : 0); };
+  var phs = function (v) { return fmt(v, v % 1 ? 2 : 0) + " PH/s"; };
+  var days = function (n) { return fmt(n, 0) + (n === 1 ? " day" : " days"); };
+  var DAY = 864e5;
+  var API = "https://mempool.space/api";
+  var getJSON = function (p) { return fetch(API + p, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(p); return r.json(); }); };
+  var utc = function (iso) { return Date.parse(iso + "T00:00:00Z"); };
+  var dateAs = function (o) { return function (t) { return new Date(t).toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); }; };
+  var fmtDate = dateAs({ day: "numeric", month: "short", year: "numeric" });
+  var longDate = dateAs({ day: "numeric", month: "long", year: "numeric" });
+
+  /* ── the per-note data: omn.json, beside this page (/mining/omn.json in production) ── */
+  // Before first issue every per-note figure in it is null and the page reads Pending; a daily
+  // job fills it from commencement. Loading, ok or failed.
+  var NOTE_URL = (function () {
+    var p = location.pathname;
+    if (!/\/$/.test(p) && !/\.[a-z0-9]+$/i.test(p)) p += "/";
+    return p.replace(/[^\/]*$/, "") + "omn.json";
+  })();
+  var INDEX_NAME = "Omnes Hashprice Index";
+  var TRANCHE_SIZE = ["US$50M"];     // Series 1, Tranche 1 is US$50,000,000
+  var note = null, noteState = "loading";
+  var live = { ready: false, price: null, hashprice: null };
+  var state = { s: "btc", days: 0, scope: "note" };
+  var seriesOpen = true;
+
+  /* ── value slots: a skeleton until data arrives, then a value, Pending or Unavailable ── */
+  function show(id, text) { var el = $(id); if (!el) return; el.textContent = text; el.classList.remove("is-pending", "is-na"); }
+  function mark(id, kind, text) {
+    var el = $(id); if (!el) return;
+    el.textContent = text || (kind === "na" ? "Unavailable" : "Pending");
+    el.classList.remove("is-pending", "is-na"); el.classList.add(kind === "na" ? "is-na" : "is-pending");
+  }
+  function line(id, text) { var el = $(id); if (el) el.textContent = text || " "; }
+
+  // everything the note views need, derived once from omn.json
+  function facts() {
+    var f = { started: false, failed: noteState === "failed", perNote: null, mined: null, subst: 0, notes: null, perPh: null,
+              totalBtc: null, hashDelivered: null, term: null, asOf: null, history: [], ownIndex: false };
+    if (!note) return f;
+    f.started = note.status === "live" || note.status === "matured";
+    var per = note.btcPerNote || {};
+    if (num(per.mined)) { f.mined = per.mined; f.subst = num(per.substitute) ? per.substitute : 0; f.perNote = f.mined + f.subst; }
+    f.notes = num(note.notesOutstanding) ? note.notesOutstanding : null;
+    f.perPh = num(note.hashrateUnderlyingPerNotePh) ? note.hashrateUnderlyingPerNotePh : null;
+    f.totalBtc = num(note.totalBtc) ? note.totalBtc : (f.perNote !== null && f.notes !== null ? f.perNote * f.notes : null);
+    f.hashDelivered = num(note.hashrateDeliveredPh) ? note.hashrateDeliveredPh : null;
+    f.asOf = note.asOf ? utc(note.asOf) : null;
+    // the daily index values in the history are used only when the file publishes the Omnes Hashprice Index
+    f.ownIndex = (note.hashpriceIndex || {}).source === INDEX_NAME;
+    f.history = Array.isArray(note.history) ? note.history.filter(function (p) { return p && p.date && num(p.mined); }) : [];
+    // the term runs 00:00 UTC on the commencement date to 23:59:59 UTC on the maturity date
+    if (note.commencementDate && note.maturityDate) {
+      var start = utc(note.commencementDate), end = utc(note.maturityDate);
+      var dayNo = function (t) { return Math.floor((t - start) / DAY) + 1; };
+      var total = Math.round((end - start) / DAY) + 1;
+      var today = Math.min(total, Math.max(0, dayNo(Date.now())));
+      // days not yet in the per-note figures, counted from the last day they include
+      var through = f.asOf !== null ? dayNo(f.asOf) : dayNo(Date.now()) - 1;
+      f.term = { start: start, end: end, total: total, day: today, left: Math.max(0, Math.min(total, total - through)), dayNo: dayNo };
+    }
+    return f;
+  }
+  // the Omnes Hashprice Index, live from public chain data (see Method): one figure across the page
+  function hashpriceFor() { return live.ready ? { v: live.hashprice } : { wait: true }; }
+  var expected = function () { return note && note.expectedFirstIssueDate ? utc(note.expectedFirstIssueDate) : null; };
+  var tranchesIssued = function () {
+    var ds = note && Array.isArray(note.tranches) ? note.tranches.map(function (t) { return t.issueDate ? utc(t.issueDate) : null; }).filter(num) : [];
+    return ds.length ? Math.min.apply(null, ds) : null;
+  };
+  var total = function (p) { return p.mined + (num(p.substitute) ? p.substitute : 0); };
+
+  function renderNote() {
+    if (noteState === "loading") return;
+    var F = facts(), miss = F.failed ? "na" : "pending";
+    // live inputs: only marked unavailable once the first network load has finished
+    var price = live.ready ? live.price : undefined;
+    var liveVal = function (id, v, f) { if (v === undefined) return; if (v !== null) show(id, f(v)); else mark(id, "na"); };
+    liveVal("oPrice", price, function (v) { return money(v, 0); });
+    var H = hashpriceFor();
+    if (!H.wait) {
+      if (H.v === null) mark("oHashprice", "na");
+      else { show("oHashprice", money(H.v, 2)); var u = document.createElement("small"); u.textContent = "per PH/s per day"; $("oHashprice").appendChild(u); }
+    }
+
+    var value = null, valueWait = false, valueNa = false;
+    if (F.perNote !== null && F.term && F.perPh) {
+      if (!live.ready || H.wait) valueWait = true;
+      else if (price && H.v !== null) value = F.perNote * price + F.term.left * H.v * F.perPh;
+      else valueNa = true;
+    }
+    var valueState = function (id) { if (valueNa) mark(id, "na"); else if (!valueWait) mark(id, miss); };
+
+    // overview
+    if (F.perNote !== null) { show("oPerNote", fmt(F.perNote, 5) + " BTC"); show("oMined", fmt(F.mined, 5) + " BTC"); show("oSubst", fmt(F.subst, 5) + " BTC"); }
+    else { mark("oPerNote", miss); mark("oMined", miss); mark("oSubst", miss); }
+    if (value !== null) show("oValue", money(value, 0)); else valueState("oValue");
+    if (value !== null && F.notes !== null) show("oValueAll", compact(value * F.notes)); else valueState("oValueAll");
+    if (F.term) show("oDaysLeft", fmt(F.term.left, 0)); else mark("oDaysLeft", miss);
+
+    // structure
+    var ex = expected();
+    if (F.perPh) show("sPerPh", phs(F.perPh) + " notional"); else mark("sPerPh", miss);
+    if (F.term) {
+      var issued = tranchesIssued();
+      if (issued) show("sIssue", fmtDate(issued)); else mark("sIssue", miss);
+      show("sTerm", days(F.term.total)); show("sEnd", fmtDate(F.term.end));
+    } else {
+      if (note && num(note.termDays)) show("sTerm", days(note.termDays)); else mark("sTerm", miss);
+      mark("sEnd", miss, F.failed ? "" : "To be set");
+      if (!F.failed && ex) show("sIssue", fmtDate(ex) + ", expected"); else mark("sIssue", miss);
+    }
+
+    // the head figures
+    if (F.notes !== null) show("cNotes", count(F.notes)); else mark("cNotes", miss);
+    if (F.hashDelivered !== null) show("cHash", phs(F.hashDelivered)); else mark("cHash", miss);
+    if (F.totalBtc !== null) show("cHeld", fmt(F.totalBtc, 4) + " BTC"); else mark("cHeld", miss);
+
+    renderCard(F, value, valueWait, valueNa, miss, H);
+    renderSeries(F, miss);
+    renderChartHead(F, value, valueWait, valueNa, miss);
+    drawNoteChart(F);
+  }
+
+  // the right pane: per note or all notes, the term, the value breakdown
+  function renderCard(F, value, valueWait, valueNa, miss, H) {
+    var all = state.scope === "all", k = all ? F.notes : 1, ex = expected();
+    var btc = F.perNote !== null && k !== null ? F.perNote * k : null;
+    var price = live.ready ? live.price : null, hp = H.wait ? null : H.v;
+    $("fBtcLbl").textContent = all ? "Bitcoin held for all notes" : "Bitcoin held per note";
+    $("fValLbl").textContent = all ? "Current value of all notes" : "Current value per note";
+    if (btc !== null) { show("fBtc", fmt(btc, all ? 4 : 8)); line("fBtcSub", price ? money(btc * price, 0) + " at today's Bitcoin price" : ""); }
+    else {
+      mark("fBtc", miss);
+      line("fBtcSub", F.failed ? "" : F.started ? "The first daily figures are being reconciled" : ex ? "From first issue, expected " + fmtDate(ex) : "From first issue");
+    }
+    var v = value !== null && k !== null ? value * k : null;
+    if (v !== null) { show("fVal", money(v, 0)); line("fValSub", (F.asOf !== null ? "Bitcoin as of " + fmtDate(F.asOf) : "Bitcoin at today's price") + ", plus " + days(F.term.left) + " left at the Omnes Hashprice Index"); }
+    else if (!valueWait) {
+      mark("fVal", valueNa || F.failed ? "na" : "pending");
+      line("fValSub", valueNa ? "Needs the live Bitcoin price and the Omnes Hashprice Index" : "Bitcoin held at today's price, plus the days left at the Omnes Hashprice Index");
+    }
+
+    // the breakdown shows the formula even before first issue
+    var ph = F.perPh && k !== null ? F.perPh * k : null;
+    if (btc !== null && price) { line("bBtc", fmt(btc, all ? 2 : 5) + " BTC × " + money(price, 0)); show("bBtcV", money(btc * price, 0)); }
+    else { line("bBtc", "Bitcoin held × Bitcoin price"); if (!valueWait) mark("bBtcV", valueNa ? "na" : miss); }
+    if (F.term && hp !== null && ph) { line("bDays", days(F.term.left) + " × " + money(hp, 2) + " × " + phs(ph)); show("bDaysV", money(F.term.left * hp * ph, 0)); }
+    else { line("bDays", "Days left × Omnes Hashprice Index ×\u00a0" + (ph ? phs(ph) : all ? "PH/s of all notes" : "1 PH/s").replace(/ /g, "\u00a0")); if (!valueWait) mark("bDaysV", valueNa ? "na" : miss); }
+    if (v !== null) show("bTot", money(v, 0)); else if (!valueWait) mark("bTot", valueNa ? "na" : miss);
+
+    // the term
+    var t = F.term;
+    if (t) {
+      var pct = t.total > 0 ? (t.day / t.total) * 100 : 0;
+      show("kTerm", t.day > 0 ? "Day " + fmt(t.day, 0) + " of " + fmt(t.total, 0) : "Starts " + fmtDate(t.start));
+      line("kTermPct", t.day > 0 ? fmt(pct, 1) + "%" : days(t.total));
+      $("kBarFill").style.width = pct + "%"; $("kBar").setAttribute("aria-valuenow", pct.toFixed(1));
+      line("kStart", fmtDate(t.start)); line("kEnd", fmtDate(t.end));
+    } else {
+      if (F.failed) mark("kTerm", "na"); else show("kTerm", ex ? "Starts " + fmtDate(ex) + ", expected" : "Not started");
+      line("kTermPct", note && num(note.termDays) ? days(note.termDays) : "");
+      $("kBarFill").style.width = "0"; $("kBar").setAttribute("aria-valuenow", "0");
+      line("kStart", "Commencement"); line("kEnd", "Maturity");
+    }
+    line("asOf", F.asOf !== null ? "Per-note figures as of " + fmtDate(F.asOf) + ", prices live"
+      : F.failed ? "Per-note figures could not be loaded just now" : ex ? "Series 1 expected to issue on " + fmtDate(ex) : "");
+    // the ranges and the CSV wait for the daily history
+    var hasHist = F.history.length > 1;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-csv="note"], [data-days]'), function (b) { b.disabled = !hasHist; });
+  }
+
+  // series and tranches, from omn.json's tranches; the series row expands them in place
+  function renderSeries(F, miss) {
+    var tranches = note && Array.isArray(note.tranches) && note.tranches.length ? note.tranches : [{ name: "Series 1" }];
+    var sum = function (key) { var vals = tranches.map(function (t) { return t[key]; }); return vals.every(num) ? vals.reduce(function (a, b) { return a + b; }, 0) : null; };
+    var tHash = sum("hashratePh"), tNotes = sum("notes");
+    if (tNotes !== null) show("tNotes", count(tNotes)); else mark("tNotes", miss);
+    if (tHash !== null) show("tHash", phs(tHash)); else mark("tHash", miss);
+    var prices = tranches.map(function (t) { return t.issuePriceUsd; });
+    var termDays = F.term ? F.term.total : null;
+    var perPhDay = function (p) { return num(p) && F.perPh && termDays ? p / (F.perPh * termDays) : null; };
+    var range = function (vals, f) { if (!vals.every(num)) return null; var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals); return lo === hi ? f(lo) : f(lo) + " to " + f(hi); };
+    var dates = tranches.map(function (t) { return t.issueDate ? utc(t.issueDate) : null; }).filter(num);
+    var ex = expected(), P = F.failed ? "Unavailable" : "Pending";
+    var usd = live.ready ? live.price : null;
+    var btcCell = function () {
+      if (F.perNote === null) return null;
+      var frag = document.createDocumentFragment();
+      frag.appendChild(document.createTextNode(fmt(F.perNote, 5) + " BTC"));
+      if (usd) { var u = document.createElement("span"); u.className = "usd"; u.textContent = money(F.perNote * usd, 0); frag.appendChild(u); }
+      return frag;
+    };
+    var daysChip = function (lead) { if (!F.term) return null; var c = document.createElement("span"); c.className = lead ? "chip days" : "chip"; c.textContent = fmt(F.term.left, 0) + "d"; return c; };
+    var body = $("seriesBody"), active = document.activeElement, refocus = !!(active && active.classList && active.classList.contains("fam"));
+    body.textContent = "";
+    var cells = function (tr, list) {
+      list.forEach(function (c, i) {
+        var el = document.createElement(i === 0 ? "th" : "td");
+        if (i === 0) el.scope = "row";
+        if (c === null) { el.textContent = i === 1 && !F.failed && !F.started && ex ? "Expected " + fmtDate(ex) : P; el.className = F.failed ? "is-na" : "is-pending"; }
+        else if (typeof c === "string") el.textContent = c;
+        else el.appendChild(c);
+        tr.appendChild(el);
+      });
+      body.appendChild(tr);
+    };
+    var seriesName = note && note.series ? note.series.replace(/^OMN\s+/, "") : "Series 1";
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "fam"; btn.setAttribute("aria-expanded", seriesOpen ? "true" : "false");
+    btn.innerHTML = '<span class="caret" aria-hidden="true">›</span><span class="mark" aria-hidden="true">S1</span>';
+    btn.appendChild(document.createTextNode(seriesName + " "));
+    var baseChip = document.createElement("span"); baseChip.className = "chip base"; baseChip.textContent = "Base"; btn.appendChild(baseChip);
+    var head = document.createElement("tr"); if (seriesOpen) head.className = "open";
+    cells(head, [btn, dates.length ? fmtDate(Math.min.apply(null, dates)) : null, tHash !== null ? phs(tHash) : null, tNotes !== null ? count(tNotes) : null,
+      range(prices, function (x) { return money(x, 0); }), range(prices.map(perPhDay), function (x) { return money(x, 2); }), btcCell(), daysChip(true)]);
+    var kids = tranches.map(function (t, i) {
+      var tr = document.createElement("tr"); tr.className = "child"; tr.id = "tranche" + (i + 1); tr.hidden = !seriesOpen;
+      var name = t.name && t.name !== seriesName && !(note && t.name === note.series) ? t.name : "Tranche " + (i + 1);
+      if (TRANCHE_SIZE[i] && name === "Tranche " + (i + 1)) name += " · " + TRANCHE_SIZE[i];
+      cells(tr, [name, t.issueDate ? fmtDate(utc(t.issueDate)) : null, num(t.hashratePh) ? phs(t.hashratePh) : null, num(t.notes) ? count(t.notes) : null,
+        num(t.issuePriceUsd) ? money(t.issuePriceUsd, 0) : null, perPhDay(t.issuePriceUsd) !== null ? money(perPhDay(t.issuePriceUsd), 2) : null, btcCell(), daysChip(false)]);
+      return tr;
+    });
+    btn.setAttribute("aria-controls", kids.map(function (r) { return r.id; }).join(" "));
+    btn.addEventListener("click", function () {
+      seriesOpen = !seriesOpen;
+      btn.setAttribute("aria-expanded", seriesOpen ? "true" : "false");
+      head.classList.toggle("open", seriesOpen);
+      kids.forEach(function (r) { r.hidden = !seriesOpen; });
+    });
+    if (refocus) btn.focus({ preventScroll: true });
+  }
+
+  /* ── the per-note chart ──────────────────────────────────────────── */
+  function drawSvg(host, lines, opts) {
+    var w = host.clientWidth - 24, h = host.clientHeight - 16;
+    if (w <= 0) return;
+    var pl = 56, pr = 8, pt = 10, pb = 24, pw = w - pl - pr, ph = h - pt - pb;
+    var all = [].concat.apply([], lines.map(function (l) { return l.data; }));
+    var min = opts.zero ? 0 : Math.min.apply(null, all), max = Math.max.apply(null, all);
+    var pad = (max - min) * 0.08 || 1; if (!opts.zero) min -= pad; max += pad;
+    var n = lines[0].data.length;
+    var x = function (k) { return pl + (n > 1 ? k / (n - 1) : 0) * pw; };
+    var y = function (v) { return pt + ph - (v - min) / (max - min) * ph; };
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + opts.label + '">';
+    svg += '<defs><linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6bff" stop-opacity=".16"/><stop offset="1" stop-color="#2f6bff" stop-opacity="0"/></linearGradient></defs>';
+    for (var g = 0; g <= 4; g++) {
+      var gv = min + (max - min) * g / 4, gy = y(gv).toFixed(1);
+      svg += '<line x1="' + pl + '" x2="' + (w - pr) + '" y1="' + gy + '" y2="' + gy + '" stroke="#e8ebee"/>';
+      svg += '<text x="' + (pl - 8) + '" y="' + gy + '" dy="3.5" text-anchor="end" font-family="Inter, sans-serif" font-size="11" fill="#5f666e">' + opts.tick(gv) + '</text>';
+    }
+    lines.forEach(function (l) {
+      var p = l.data.map(function (v, k) { return (k ? "L" : "M") + x(k).toFixed(1) + " " + y(v).toFixed(1); }).join(" ");
+      if (l.fill) svg += '<path d="' + p + ' L' + x(n - 1).toFixed(1) + ' ' + (pt + ph) + ' L' + pl + ' ' + (pt + ph) + ' Z" fill="url(#chartFill)"/>';
+      svg += '<path d="' + p + '" fill="none" stroke="' + l.color + '" stroke-width="' + (l.width || 2) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+    svg += '<circle cx="' + x(n - 1).toFixed(1) + '" cy="' + y(lines[0].data[n - 1]).toFixed(1) + '" r="4" fill="#2f6bff" stroke="#fff" stroke-width="2"/>';
+    var idx = n < 3 ? [0, n - 1] : [0, Math.floor((n - 1) / 2), n - 1];
+    idx.forEach(function (k, j) {
+      svg += '<text x="' + x(k).toFixed(1) + '" y="' + (h - 6) + '" text-anchor="' + (j === 0 ? "start" : j === idx.length - 1 ? "end" : "middle") + '" font-family="Inter, sans-serif" font-size="11" fill="#5f666e">' + opts.xl(k) + '</text>';
+    });
+    host.innerHTML = svg + "</svg>";
+  }
+  // the daily history, cut to the chosen range by date rather than by entry count
+  function ranged(history) {
+    if (!state.days || !history.length) return history;
+    var cut = utc(history[history.length - 1].date) - (state.days - 1) * DAY;
+    return history.filter(function (p) { return utc(p.date) >= cut; });
+  }
+  function chartData(F) {
+    var h = ranged(F.history), all = state.scope === "all" && F.notes !== null, k = all ? F.notes : 1;
+    if (state.s === "btc") {
+      var anySubst = h.some(function (p) { return num(p.substitute) && p.substitute > 0; });
+      var lines = [{ data: h.map(function (p) { return total(p) * k; }), color: "#2f6bff", fill: true }];
+      if (anySubst) lines.push({ data: h.map(function (p) { return p.mined * k; }), color: "#8b939b", width: 1.5 });
+      var top = lines[0].data.length ? Math.max.apply(null, lines[0].data) : 0;
+      return { rows: h, lines: lines, zero: true, label: "Cumulative Bitcoin" + (all ? ", all notes" : " per note"),
+               legend: anySubst ? [["#2f6bff", "Total"], ["#8b939b", "Mined only"]] : [["#2f6bff", all ? "Bitcoin, all notes" : "Bitcoin per note"]],
+               tick: function (v) { return fmt(v, all ? (top >= 10 ? 0 : 2) : (top < 0.01 ? 4 : 3)); } };
+    }
+    if (state.s === "value") {
+      // each day's value: that day's Bitcoin at that day's price, plus the days then left at that
+      // day's Omnes Hashprice Index; only from a file that publishes our index
+      var rows = F.term && F.perPh && F.ownIndex ? h.filter(function (p) { return num(p.priceUsd) && p.priceUsd > 0 && num(p.hashpriceUsd); }) : [];
+      return { rows: rows, zero: false, label: "Current value" + (all ? ", all notes" : " per note"),
+               legend: [["#2f6bff", "Current value" + (all ? ", all notes" : " per note") + ", on each day's figures"]],
+               lines: [{ data: rows.map(function (p) { var left = Math.max(0, F.term.total - F.term.dayNo(utc(p.date))); return (total(p) * p.priceUsd + left * p.hashpriceUsd * F.perPh) * k; }), color: "#2f6bff" }],
+               tick: function (t) { return all ? "$" + fmt(t / 1e6, 0) + "M" : "$" + fmt(t / 1e3, 0) + "k"; } };
+    }
+    var hr = h.filter(function (p) { return num(p.hashratePh); });
+    return { rows: hr, zero: true, label: "Hashrate delivered", legend: [["#2f6bff", "Delivered to the pool account, PH/s"]],
+             lines: [{ data: hr.map(function (p) { return p.hashratePh; }), color: "#2f6bff", fill: true }],
+             tick: function (t) { return fmt(t, 0); } };
+  }
+  function renderChartHead(F, value, valueWait, valueNa, miss) {
+    var all = state.scope === "all" && F.notes !== null, k = all ? F.notes : 1, sub = "";
+    if (state.s === "btc") {
+      if (F.perNote !== null) {
+        show("chartBig", fmt(F.perNote * k, all ? 2 : 5) + " BTC");
+        var h = F.history, last = h[h.length - 1];
+        if (last) { var ref = h.filter(function (p) { return utc(p.date) <= utc(last.date) - 30 * DAY; }).pop(); if (ref) sub = signed((total(last) - total(ref)) * k, all ? 3 : 5) + " BTC over 30 days"; }
+      } else mark("chartBig", miss);
+    } else if (state.s === "value") {
+      if (value !== null) { show("chartBig", all ? compact(value * k) : money(value, 0)); sub = "Bitcoin at today's price, plus the days left at the Omnes Hashprice Index"; }
+      else if (!valueWait) mark("chartBig", valueNa ? "na" : miss);
+    } else {
+      if (F.hashDelivered !== null) {
+        show("chartBig", phs(F.hashDelivered));
+        var contracted = note && Array.isArray(note.tranches) ? note.tranches.reduce(function (a, t) { return a + (num(t.hashratePh) ? t.hashratePh : 0); }, 0) : 0;
+        if (contracted) sub = "Contracted " + count(contracted) + " PH/s; any shortfall is paid in Bitcoin";
+      } else mark("chartBig", miss);
+    }
+    line("chartSub", sub);
+  }
+  function drawNoteChart(F) {
+    if (noteState === "loading") return;
+    F = F || facts();
+    var d = chartData(F), host = $("chartPlot"), chart = $("chart"), legend = $("legend");
+    legend.textContent = "";
+    if (d.rows.length < 2) {
+      host.textContent = ""; chart.classList.add("is-empty"); $("chartEmpty").hidden = false;
+      var ex = expected();
+      $("chartEmptyText").textContent = F.failed ? "Chart unavailable" :
+        !F.started ? (ex ? "Figures begin at first issue, expected " + longDate(ex) : "Figures begin at first issue") :
+        state.s === "btc" ? "The chart appears after the first two daily figures" : "This history is not available yet";
+      return;
+    }
+    chart.classList.remove("is-empty"); $("chartEmpty").hidden = true;
+    d.legend.forEach(function (l) {
+      var s = document.createElement("span"), i = document.createElement("i");
+      i.style.background = l[0]; s.appendChild(i); s.appendChild(document.createTextNode(l[1])); legend.appendChild(s);
+    });
+    var times = d.rows.map(function (p) { return utc(p.date); }), span = (times[times.length - 1] - times[0]) / DAY;
+    var xl = dateAs(span > 330 ? { month: "short", year: "numeric" } : { day: "numeric", month: "short" });
+    drawSvg(host, d.lines, { zero: d.zero, tick: d.tick, label: d.label, xl: function (q) { return xl(times[q]); } });
+  }
+
+  /* ── live network, and the Omnes Hashprice Index computed from it ── */
+  var supplyAt = function (h) { var t = 0, s = 50, l = h + 1; while (l > 0 && s >= 1e-8) { var n = Math.min(l, 210000); t += n * s; l -= n; s /= 2; } return t; };
+  var put = function (id, v) { var el = $(id); if (el) el.textContent = v; };
+  function loadLive() {
+    var yesterday = Math.floor(Date.now() / 1000) - 86400;
+    return Promise.all([
+      getJSON("/v1/mining/hashrate/3d").catch(function () { return null; }),
+      getJSON("/v1/mining/reward-stats/144").catch(function () { return null; }),
+      getJSON("/v1/prices").catch(function () { return null; }),
+      getJSON("/v1/difficulty-adjustment").catch(function () { return null; }),
+      fetch(API + "/blocks/tip/height").then(function (r) { return r.ok ? r.text() : null; }).then(function (t) { var v = Number(t); return v > 0 ? v : null; }).catch(function () { return null; }),
+      getJSON("/v1/historical-price?currency=USD&timestamp=" + yesterday).then(function (h) { var p = h.prices && h.prices[0] && h.prices[0].USD; return p > 0 ? p : null; }).catch(function () { return null; })
+    ]).then(function (r) {
+      var hr = r[0], rw = r[1], adj = r[3], height = r[4], dayAgo = r[5];
+      var p = r[2] && r[2].USD > 0 ? r[2].USD : null;
+      var hs = hr && hr.currentHashrate > 0 ? hr.currentHashrate : null, diff = hr && hr.currentDifficulty > 0 ? hr.currentDifficulty : null;
+      var blocks = rw ? rw.endBlock - rw.startBlock + 1 : 0, perBlock = null, subsidy = null, avgFee = null, share = null;
+      if (rw && blocks > 0 && Number(rw.totalReward) > 0) {
+        var tot = Number(rw.totalReward) / 1e8, fee = Number(rw.totalFee) / 1e8;
+        subsidy = (tot - fee) / blocks; avgFee = fee / blocks; perBlock = subsidy + avgFee; share = fee / tot;
+      }
+      // the Omnes Hashprice Index: 144 × (subsidy + average fee, last 144 blocks) ÷ hashrate in PH/s, × price for USD
+      var netDay = perBlock !== null ? 144 * perBlock : null, btcPh = netDay !== null && hs ? netDay / (hs / 1e15) : null;
+      live.ready = true; live.price = p; live.hashprice = btcPh !== null && p ? btcPh * p : null;
+      put("nHp", live.hashprice !== null ? money(live.hashprice, 2) : "Unavailable"); put("nHpBtc", btcPh !== null ? fmt(btcPh, 8) : "Unavailable");
+      put("nPrice", p ? money(p, 0) : "Unavailable");
+      var pf = $("nPriceF"); if (p && dayAgo) { var c = (p / dayAgo - 1) * 100; pf.textContent = signed(c, 2) + "% in 24 hours"; pf.className = c >= 0 ? "up" : "dn"; } else pf.textContent = "";
+      put("nCap", p && height ? compact(p * supplyAt(height)) : "Unavailable"); put("nCapF", height ? fmt(supplyAt(height), 0) + " BTC issued" : "");
+      put("nHash", hs ? fmt(hs / 1e18, 2) + " EH/s" : "Unavailable"); put("nHashF", hs ? "Three-day estimate" : "");
+      put("nMined", netDay !== null ? fmt(netDay, 1) + " BTC" : "Unavailable");
+      put("nDiff", diff ? fmt(diff / 1e12, 2) + " T" : "Unavailable"); put("nDiffF", subsidy !== null ? "Subsidy " + fmt(subsidy, 3) + " BTC" : "");
+      if (adj && num(adj.difficultyChange)) { put("nAdj", signed(adj.difficultyChange, 2) + "%"); put("nAdjF", fmt(adj.remainingBlocks, 0) + " blocks, about " + fmt(adj.remainingTime / DAY, 1) + " days"); } else { put("nAdj", "Unavailable"); put("nAdjF", ""); }
+      if (height) { put("nHeight", fmt(height, 0)); var toH = Math.ceil((height + 1) / 210000) * 210000 - height; put("nHeightF", "Halving in about " + fmt(Math.round(toH / 144), 0) + " days"); } else { put("nHeight", "Unavailable"); put("nHeightF", ""); }
+      if (share !== null) { put("nFees", fmt(share * 100, 2) + "%"); put("nFeesF", "Average " + fmt(avgFee, 4) + " BTC per block"); } else { put("nFees", "Unavailable"); put("nFeesF", ""); }
+      var ok = r.slice(0, 5).filter(Boolean).length;
+      $("statusDot").className = "dot" + (ok === 5 ? "" : ok ? " stale" : " down");
+      $("statusText").textContent = ok === 5 ? "Chain data live, " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : ok ? "Partial chain data" : "Chain data unavailable";
+      renderNote();
+    });
+  }
+
+  function loadNote() {
+    return fetch(NOTE_URL, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("omn.json " + r.status); return r.json(); })
+      .then(function (d) { note = d; noteState = "ok"; }, function () { if (noteState !== "ok") { note = null; noteState = "failed"; } })
+      .then(renderNote);
+  }
+
+  /* ── hashrate and difficulty ─────────────────────────────────────── */
+  var HD = { period: "1y", cache: {}, d: null, i0: 0, i1: 0, hover: null };
+  var C = { ma: "#2f6bff", daily: "rgba(47,107,255,0.28)", diff: "#5f666e", grid: "#e8ebee", text: "#5f666e" };
+  var units = function (list) {
+    return function (v, dec) {
+      if (!(v > 0)) return "0";
+      for (var i = 0; i < list.length; i++) if (v >= list[i][1] || i === list.length - 1) { var x = v / list[i][1]; return fmt(x, dec !== undefined ? dec : x < 10 ? 1 : 0) + (list[i][0] ? " " + list[i][0] : ""); }
+    };
+  };
+  var fmtHash = units([["ZH/s", 1e21], ["EH/s", 1e18], ["PH/s", 1e15], ["TH/s", 1e12], ["GH/s", 1e9], ["MH/s", 1e6], ["kH/s", 1e3], ["H/s", 1]]);
+  var fmtDiff = units([["T", 1e12], ["G", 1e9], ["M", 1e6], ["K", 1e3], ["", 1]]);
+  var utcDate = function (t, o) { return new Date(t).toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); };
+
+  function shapeHD(r) {
+    var rows = (r.hashrates || []).filter(function (p) { return p.avgHashrate > 0; });
+    var t = rows.map(function (p) { return p.timestamp * 1000; }), h = rows.map(function (p) { return p.avgHashrate; });
+    var ma = h.map(function (v, i) { var f = Math.max(0, i - 6), s = 0; for (var q = f; q <= i; q++) s += h[q]; return s / (i - f + 1); });
+    var adj = (r.difficulty || []).filter(function (a) { return a.difficulty > 0; }).sort(function (a, b) { return a.time - b.time; });
+    var before = adj.length ? (adj[0].adjustment > 0 ? adj[0].difficulty / adj[0].adjustment : adj[0].difficulty) : null, j = -1;
+    var diff = t.map(function (ts) { while (j + 1 < adj.length && adj[j + 1].time * 1000 <= ts + DAY - 1) j++; return j >= 0 ? adj[j].difficulty : before; });
+    return { t: t, h: h, ma: ma, diff: diff };
+  }
+  function canvasFor(cv) {
+    var box = cv.parentElement, dpr = window.devicePixelRatio || 1, w = box.clientWidth, h = box.clientHeight;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    var g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    return { g: g, w: w, h: h };
+  }
+  function geom(w, h) {
+    var d = HD.d, i0 = HD.i0, i1 = HD.i1, n = i1 - i0 + 1, pl = 74, pr = 52, pt = 12, pb = 26, pw = w - pl - pr, ph = h - pt - pb;
+    var ma = d.ma.slice(i0, i1 + 1), lo = Math.min.apply(null, ma), hi = Math.max.apply(null, ma), lp = (hi - lo) * 0.14 || hi * 0.05 || 1;
+    lo = Math.max(0, lo - lp); hi += lp;
+    var dv = d.diff.slice(i0, i1 + 1).filter(num), ro = dv.length ? Math.min.apply(null, dv) : 0, ri = dv.length ? Math.max.apply(null, dv) : 1, rp = (ri - ro) * 0.1 || ri * 0.05 || 1;
+    ro = Math.max(0, ro - rp); ri += rp;
+    return { n: n, pl: pl, pr: pr, pt: pt, pw: pw, ph: ph, lo: lo, hi: hi, ro: ro, ri: ri,
+      x: function (i) { return pl + (n > 1 ? (i - i0) / (n - 1) : 0) * pw; },
+      yl: function (v) { return pt + ph - ((v - lo) / (hi - lo)) * ph; },
+      yr: function (v) { return pt + ph - ((v - ro) / (ri - ro)) * ph; } };
+  }
+  function drawHD() {
+    var c = canvasFor($("hdCanvas")), g = c.g, w = c.w, h = c.h, d = HD.d, tip = $("hdTip");
+    if (!d || HD.i1 - HD.i0 < 1) { tip.hidden = true; return; }
+    var G = geom(w, h); if (G.pw <= 0 || G.ph <= 0) return;
+    var i0 = HD.i0, i1 = HD.i1;
+    g.font = "11px Inter, sans-serif"; g.textBaseline = "middle";
+    for (var k = 0; k <= 4; k++) {
+      var yy = Math.round(G.pt + G.ph - (k / 4) * G.ph) + 0.5;
+      g.strokeStyle = C.grid; g.lineWidth = 1; g.beginPath(); g.moveTo(G.pl, yy); g.lineTo(w - G.pr, yy); g.stroke();
+      g.fillStyle = C.text; g.textAlign = "right"; g.fillText(fmtHash(G.lo + (G.hi - G.lo) * k / 4), G.pl - 10, yy);
+      g.textAlign = "left"; g.fillText(fmtDiff(G.ro + (G.ri - G.ro) * k / 4, 0), w - G.pr + 8, yy);
+    }
+    g.save(); g.beginPath(); g.rect(G.pl, G.pt - 2, G.pw, G.ph + 4); g.clip();
+    g.beginPath(); for (var a = i0; a <= i1; a++) { if (a === i0) g.moveTo(G.x(a), G.yl(d.h[a])); else g.lineTo(G.x(a), G.yl(d.h[a])); }
+    g.strokeStyle = C.daily; g.lineWidth = 1; g.lineJoin = "round"; g.stroke();
+    g.beginPath(); var on = false;
+    for (var b = i0; b <= i1; b++) { if (!num(d.diff[b])) continue; var xb = G.x(b), yb = G.yr(d.diff[b]); if (!on) { g.moveTo(xb, yb); on = true; } else { g.lineTo(xb, G.yr(d.diff[b - 1])); g.lineTo(xb, yb); } }
+    g.strokeStyle = C.diff; g.lineWidth = 1.75; g.lineJoin = "miter"; g.stroke();
+    g.beginPath(); for (var mm2 = i0; mm2 <= i1; mm2++) { if (mm2 === i0) g.moveTo(G.x(mm2), G.yl(d.ma[mm2])); else g.lineTo(G.x(mm2), G.yl(d.ma[mm2])); }
+    g.strokeStyle = C.ma; g.lineWidth = 2.2; g.lineJoin = "round"; g.stroke();
+    g.restore();
+    var span = (d.t[i1] - d.t[i0]) / DAY;
+    var fx = span > 1100 ? function (t) { return utcDate(t, { year: "numeric" }); } : span > 200 ? function (t) { return utcDate(t, { month: "short", year: "2-digit" }); } : function (t) { return utcDate(t, { day: "2-digit", month: "short" }); };
+    var lw = g.measureText(fx(d.t[i1])).width + 40, count = Math.max(2, Math.min(7, Math.floor(G.pw / lw))), seen = {};
+    g.fillStyle = C.text; g.textBaseline = "top";
+    for (var q = 0; q < count; q++) {
+      var ix = Math.round(i0 + (q / (count - 1)) * (i1 - i0)), lab = fx(d.t[ix]);
+      if (seen[lab]) continue; seen[lab] = 1;
+      g.textAlign = q === 0 ? "left" : q === count - 1 ? "right" : "center"; g.fillText(lab, G.x(ix), G.pt + G.ph + 8);
+    }
+    if (HD.hover === null || HD.hover < i0 || HD.hover > i1) { tip.hidden = true; return; }
+    var i = HD.hover, xh = Math.round(G.x(i)) + 0.5;
+    g.strokeStyle = "rgba(23,25,28,.3)"; g.lineWidth = 1; g.beginPath(); g.moveTo(xh, G.pt); g.lineTo(xh, G.pt + G.ph); g.stroke();
+    [[d.ma[i], G.yl, C.ma], [d.diff[i], G.yr, C.diff]].forEach(function (pt) {
+      if (!num(pt[0])) return; g.beginPath(); g.arc(xh, pt[1](pt[0]), 4, 0, Math.PI * 2); g.fillStyle = pt[2]; g.fill(); g.lineWidth = 2; g.strokeStyle = "#fff"; g.stroke();
+    });
+    tip.textContent = "";
+    var hd = document.createElement("b"); hd.textContent = utcDate(d.t[i], { day: "numeric", month: "short", year: "numeric" }); tip.appendChild(hd);
+    [["Difficulty", num(d.diff[i]) ? fmtDiff(d.diff[i], 2) : "Unavailable", C.diff], ["Hashrate", fmtHash(d.h[i], 2), "rgba(47,107,255,.4)"], ["Hashrate, 7-day avg", fmtHash(d.ma[i], 2), C.ma]].forEach(function (r) {
+      var row = document.createElement("span"), dot = document.createElement("i"), val = document.createElement("em");
+      dot.style.background = r[2]; val.textContent = r[1]; row.appendChild(dot); row.appendChild(document.createTextNode(r[0])); row.appendChild(val); tip.appendChild(row);
+    });
+    tip.hidden = false;
+    var tw = tip.offsetWidth, left = xh + 14; if (left + tw > w - 4) left = xh - tw - 14; tip.style.left = Math.max(4, left) + "px";
+  }
+  function drawBrush() {
+    var c = canvasFor($("hdBrushCanvas")), g = c.g, d = HD.d, win = $("hdWin");
+    if (!d || d.t.length < 2) { win.style.display = "none"; return; }
+    win.style.display = "";
+    var N = d.t.length, lo = Math.min.apply(null, d.ma), hi = Math.max.apply(null, d.ma);
+    g.beginPath();
+    for (var i = 0; i < N; i++) { var x = (i / (N - 1)) * c.w, y = c.h - 6 - ((d.ma[i] - lo) / ((hi - lo) || 1)) * (c.h - 12); if (i === 0) g.moveTo(x, y); else g.lineTo(x, y); }
+    g.strokeStyle = "rgba(47,107,255,.55)"; g.lineWidth = 1; g.stroke();
+    win.style.left = (HD.i0 / (N - 1)) * 100 + "%"; win.style.width = ((HD.i1 - HD.i0) / (N - 1)) * 100 + "%";
+  }
+  function hdNote() {
+    var d = HD.d; if (!d) return;
+    var a = d.ma[HD.i0], b = d.ma[HD.i1], da = d.diff[HD.i0], db = d.diff[HD.i1];
+    var ch = function (x, y, f) { var r = y / x; return r > 10 || r < 0.1 ? "from " + f(x, 2) + " to " + f(y, 2) : signed((r - 1) * 100, 1) + "%"; };
+    var parts = [utcDate(d.t[HD.i0], { day: "2-digit", month: "short", year: "numeric" }) + " to " + utcDate(d.t[HD.i1], { day: "2-digit", month: "short", year: "numeric" })];
+    if (a > 0) parts.push("hashrate 7-day avg " + ch(a, b, fmtHash));
+    if (num(da) && num(db) && da > 0) parts.push("difficulty " + ch(da, db, fmtDiff));
+    $("hdNote").textContent = parts.join(" · ");
+  }
+  function redrawHD() { drawHD(); drawBrush(); hdNote(); }
+  function setHD(r) { HD.d = shapeHD(r); HD.i0 = 0; HD.i1 = Math.max(0, HD.d.t.length - 1); HD.hover = null; $("hdEmpty").hidden = HD.d.t.length > 1; if (HD.d.t.length < 2) $("hdEmpty").textContent = "Unavailable"; redrawHD(); }
+  function loadHD(period) {
+    HD.period = period;
+    if (HD.cache[period]) { setHD(HD.cache[period]); return; }
+    $("hdEmpty").hidden = false; $("hdEmpty").textContent = "Loading";
+    getJSON("/v1/mining/hashrate/" + period).then(function (r) { HD.cache[period] = r; if (HD.period === period) setHD(r); })
+      .catch(function () { if (HD.period !== period) return; HD.d = null; drawHD(); drawBrush(); $("hdEmpty").hidden = false; $("hdEmpty").textContent = "Unavailable"; $("hdNote").textContent = "Unavailable"; });
+  }
+  (function () {
+    var box = $("hdBox");
+    var at = function (cx) { if (!HD.d) return null; var r = box.getBoundingClientRect(), G = geom(r.width, r.height), f = (cx - r.left - G.pl) / G.pw; return Math.max(HD.i0, Math.min(HD.i1, Math.round(HD.i0 + f * (HD.i1 - HD.i0)))); };
+    box.addEventListener("pointermove", function (e) { HD.hover = at(e.clientX); drawHD(); });
+    box.addEventListener("pointerleave", function () { HD.hover = null; drawHD(); });
+    box.addEventListener("keydown", function (e) {
+      if (!HD.d) return;
+      var s = e.shiftKey ? 7 : 1, cur = HD.hover === null ? HD.i1 : HD.hover;
+      if (e.key === "ArrowLeft") HD.hover = Math.max(HD.i0, cur - s); else if (e.key === "ArrowRight") HD.hover = Math.min(HD.i1, cur + s);
+      else if (e.key === "Home") HD.hover = HD.i0; else if (e.key === "End") HD.hover = HD.i1; else if (e.key === "Escape") HD.hover = null; else return;
+      e.preventDefault(); drawHD();
+      if (HD.hover !== null) { var d = HD.d, i = HD.hover; $("hdNote").textContent = utcDate(d.t[i], { day: "2-digit", month: "short", year: "numeric" }) + ": hashrate " + fmtHash(d.h[i], 2) + ", 7-day avg " + fmtHash(d.ma[i], 2) + (num(d.diff[i]) ? ", difficulty " + fmtDiff(d.diff[i], 2) : ""); } else hdNote();
+    });
+    box.addEventListener("blur", function () { if (HD.hover !== null) { HD.hover = null; drawHD(); hdNote(); } });
+    var brush = $("hdBrush"), drag = null;
+    brush.addEventListener("pointerdown", function (e) {
+      if (!HD.d) return;
+      var N = HD.d.t.length, min = Math.min(N - 1, 14), r = brush.getBoundingClientRect(), idx = Math.round(((e.clientX - r.left) / r.width) * (N - 1));
+      var edge = e.target.getAttribute && e.target.getAttribute("data-edge");
+      if (!edge && e.target !== $("hdWin")) { var half = Math.round((HD.i1 - HD.i0) / 2); HD.i0 = Math.max(0, Math.min(N - 1 - 2 * half, idx - half)); HD.i1 = HD.i0 + 2 * half; redrawHD(); }
+      drag = { edge: edge || "move", x: e.clientX, i0: HD.i0, i1: HD.i1, N: N, min: min };
+      brush.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    brush.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var di = Math.round(((e.clientX - drag.x) / brush.clientWidth) * (drag.N - 1));
+      if (drag.edge === "l") HD.i0 = Math.max(0, Math.min(drag.i1 - drag.min, drag.i0 + di));
+      else if (drag.edge === "r") HD.i1 = Math.min(drag.N - 1, Math.max(drag.i0 + drag.min, drag.i1 + di));
+      else { var span = drag.i1 - drag.i0, s0 = Math.max(0, Math.min(drag.N - 1 - span, drag.i0 + di)); HD.i0 = s0; HD.i1 = s0 + span; }
+      HD.hover = null; redrawHD();
+    });
+    var end = function () { drag = null; };
+    brush.addEventListener("pointerup", end); brush.addEventListener("pointercancel", end);
+    brush.addEventListener("dblclick", function () { if (!HD.d) return; HD.i0 = 0; HD.i1 = HD.d.t.length - 1; redrawHD(); });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-period]"), function (b, i, all) {
+      b.addEventListener("click", function () { Array.prototype.forEach.call(all, function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); }); loadHD(b.dataset.period); });
+    });
+    $("hdCsv").addEventListener("click", function () {
+      var d = HD.d; if (!d) return;
+      var whole = function (v) { return v.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: 0 }); };
+      var rows = ["date,hashrate_h_s,hashrate_7d_avg_h_s,difficulty"];
+      for (var i = HD.i0; i <= HD.i1; i++) rows.push([new Date(d.t[i]).toISOString().slice(0, 10), whole(d.h[i]), whole(d.ma[i]), num(d.diff[i]) ? whole(d.diff[i]) : ""].join(","));
+      download("bitcoin-hashrate-difficulty-" + HD.period + ".csv", rows);
+    });
+  })();
+
+  function download(name, rows) {
+    var url = URL.createObjectURL(new Blob([rows.join("\n") + "\n"], { type: "text/csv" }));
+    var a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  // the note's daily history from omn.json, as published
+  Array.prototype.forEach.call(document.querySelectorAll('[data-csv="note"]'), function (b) {
+    b.addEventListener("click", function () {
+      var h = note && Array.isArray(note.history) ? note.history : [];
+      if (!h.length) return;
+      var bt = function (v) { return num(v) ? v.toFixed(8) : ""; }, u = function (v) { return num(v) ? v.toFixed(2) : ""; };
+      var rows = ["date,mined_btc_per_note,substitute_btc_per_note,total_btc_per_note,hashrate_delivered_ph,price_usd,hashprice_usd_per_ph_day"];
+      h.forEach(function (p) {
+        var tot = num(p.mined) ? p.mined + (num(p.substitute) ? p.substitute : 0) : null;
+        rows.push([p.date, bt(p.mined), bt(p.substitute), bt(tot), u(p.hashratePh), u(p.priceUsd), u(p.hashpriceUsd)].join(","));
+      });
+      download("omn-series-1-daily.csv", rows);
+    });
+  });
+
+  /* ── tabs and toggles ────────────────────────────────────────────── */
+  function group(sel, attr, cb) {
+    var btns = document.querySelectorAll(sel);
+    Array.prototype.forEach.call(btns, function (b, i) {
+      b.addEventListener("click", function () { Array.prototype.forEach.call(btns, function (o) { o.setAttribute(attr, o === b ? "true" : "false"); if (attr === "aria-selected") o.tabIndex = o === b ? 0 : -1; }); cb(b); });
+      if (attr === "aria-selected") b.addEventListener("keydown", function (e) {
+        var j = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : null; if (j === null) return;
+        e.preventDefault(); var t = btns[(j + btns.length) % btns.length]; t.click(); t.focus();
+      });
+    });
+  }
+  group("[data-series]", "aria-selected", function (b) { state.s = b.dataset.series; renderNote(); });
+  group("[data-scope]", "aria-selected", function (b) { state.scope = b.dataset.scope; renderNote(); });
+  group("[data-days]", "aria-pressed", function (b) { state.days = Number(b.dataset.days); drawNoteChart(); });
+  [["#b-over", "#b-struct", "#b-cust"], ["#db-net", "#db-method", "#db-disc"]].forEach(function (ids) {
+    group(ids.join(","), "aria-selected", function (b) {
+      ids.forEach(function (id) { var t = document.querySelector(id); document.getElementById(t.getAttribute("aria-controls")).hidden = t !== b; });
+      if (b.id === "db-net") redrawHD();
+    });
+  });
+
+  /* ── the section switcher follows the section in view (site.js runs the nav) ── */
+  var navLinks = document.querySelectorAll('.subnav a[href^="#"]');
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        Array.prototype.forEach.call(navLinks, function (a) { if (a.getAttribute("href") === "#" + e.target.id) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    ["note", "series", "network"].forEach(function (id) { var el = document.getElementById(id); if (el) io.observe(el); });
+  }
+
+  var t; window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(function () { drawNoteChart(); redrawHD(); }, 120); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { drawNoteChart(); redrawHD(); });
+  loadNote(); setInterval(loadNote, 600000);
+  loadLive(); setInterval(loadLive, 60000);
+  loadHD("1y");
+})();
+</script>
+<dialog class="gate" id="gate" aria-labelledby="gateTitle" aria-describedby="gateIntro" data-nosnippet>
+  <div class="gate-body">
+    <div class="gate-head">
+      <img src="/omnes-logo-black.svg" alt="Omnes">
+      <h2 id="gateTitle">Welcome to the Omnes Website.</h2>
+    </div>
+    <div class="gate-scroll" id="gateScroll" tabindex="0" role="region" aria-label="Terms of Access">
+      <p class="gate-intro" id="gateIntro">This website <a href="https://www.omnes.io">www.omnes.io</a> and the information contained on it are provided by Omnes Securities S.&agrave; r.l. ("<strong>Omnes</strong>") solely for information purposes. Structured products are offered by way of private placement only to non-US investors who qualify as professional investors under MiFID II.</p>
+      <p class="gate-hint">Please scroll through and read all terms carefully before agreeing. If you do not agree, you must immediately leave this website.</p>
+      <div class="gate-terms">
+        <h3>Terms of Access</h3>
+        <h4>1. Acceptance of terms</h4>
+        <p>By clicking "I Agree" below, you confirm that you have read, understood, and agree to be bound by:</p>
+        <ul>
+          <li>the <a href="https://omnes.io/website-terms/" target="_blank" rel="noopener">Website Terms</a></li>
+          <li>the <a href="https://omnes.io/global-privacy-notice/" target="_blank" rel="noopener">Global Privacy Notice</a></li>
+          <li>the <a href="https://omnes.io/cookies-policy/" target="_blank" rel="noopener">Cookies Policy</a></li>
+        </ul>
+        <p>You further attest that you are a professional investor who is permitted to access this website and the information contained on it in accordance with applicable laws and regulations.</p>
+        <h4>2. Geographical / jurisdiction restrictions</h4>
+        <p>The availability and dissemination of information on this website may be subject to restrictions under applicable laws or regulations in certain jurisdictions.</p>
+        <p>The information on this website is not, and under no circumstances should be construed as being directed at, or intended for dissemination to, or use by any natural or legal person in any jurisdiction (whether such jurisdiction is determined by virtue of physical, virtual or registered office, domicile, nationality, or residence), where the dissemination or use of such information would be violating restrictions under applicable laws or regulations in such jurisdiction.</p>
+        <p>In particular:</p>
+        <ul>
+          <li><strong>United States and Canada:</strong> This website and the information contained in it should not be accessed by any US or Canadian natural or legal person (or anyone located in, resident in, or organised under the laws of the US or Canada). The information is not, and must not be construed as, an advertisement or public offering in the US or Canada.</li>
+          <li><strong>United Kingdom:</strong> The information is directed only at UK investment professionals (as defined under the Financial Services and Markets Act 2000 (Financial Promotion) Order 2005, as amended). It is not intended for retail investors.</li>
+          <li><strong>European Economic Area ("EEA"):</strong> The information is directed only at EEA investment professionals and is not intended for retail clients (as defined in MiFID II).</li>
+        </ul>
+        <p>Persons in any of the above jurisdictions (or any other jurisdiction where access would be unlawful) must not access this website.</p>
+        <h4>3. Access at your initiative</h4>
+        <p>By proceeding and accessing this website, you confirm that your access is not the result of or subsequent to any advertisement, article, notice or other communication published in any newspaper, magazine or similar media or broadcast over television or radio, or presented at any seminar or meeting accessible to the public, or any solicitation by a person not previously known to you in connection with investments generally.</p>
+        <p>Furthermore, by proceeding you hereby confirm the following representations and warranties are accurate and correct:</p>
+        <ol>
+          <li>I am a professional investor (as defined under MiFID II or the equivalent definition under the applicable law in my country of residence/registration) and I am eligible, in accordance with the applicable law, to request and receive this information.</li>
+          <li>I have approached Omnes on my own exclusive initiative and this access does not come about as a result of any direct or indirect contact, solicitation, intervention, marketing, pre-marketing, arranging, advice, offering or placement efforts, nor as a result of any form of general solicitation or advertising by or on behalf of Omnes or its affiliates.</li>
+          <li>To the extent I have already received any information, documentation or communication concerning Omnes (including the link to this website), it was sent to me at and after my own request and otherwise only upon my own initiative.</li>
+          <li>Any decision to access this website or to consider any investment will be based solely on my own due diligence and review of materials received at my request.</li>
+          <li>If any of the above representations becomes untrue or inaccurate, I will promptly inform Omnes in writing.</li>
+        </ol>
+        <h4>4. Validity</h4>
+        <p>If any provision of these terms is found by a court of competent jurisdiction to be invalid, the parties nevertheless agree that the court should endeavour to give effect to the parties' intentions as reflected in the provision and the other provisions of the website shall remain in full force and effect.</p>
+        <h4>5. Governing law and jurisdiction</h4>
+        <p>These terms of access will be governed by, construed, interpreted and applied in accordance with the laws of the Grand Duchy of Luxembourg, without regard to its conflict of laws principles. Any dispute, claim or difference arising out of or in connection with these terms of access, your access to and use of this website, or the subject matter or formation of either (including any non-contractual dispute, claim or difference) will be referred to and finally resolved by the courts of Luxembourg City, Grand Duchy of Luxembourg.</p>
+        <div class="gate-notice">
+          <p>By clicking "I Agree" you acknowledge that:</p>
+          <ul>
+            <li>This website and all information on it are provided on an "as is" basis with no representations or warranties.</li>
+            <li>Nothing on this website constitutes an offer, solicitation or invitation to invest. Any investment into an Investment Product will only be made on the basis of definitive offering documentation.</li>
+            <li>You access the website entirely at your own risk and initiative.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="gate-actions">
+      <button class="btn btn-light" type="button" id="gateLeave">Leave</button>
+      <button class="btn btn-dark" type="button" id="btnAgree" disabled>I Agree</button>
+    </div>
+  </div>
+</dialog>
+</body>
+</html>
