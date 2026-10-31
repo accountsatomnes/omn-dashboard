@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://mempool.space" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..500;1,8..60,300..500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css?v=2">
-<link rel="stylesheet" href="/assets/dashboard.css?v=3">
+<link rel="stylesheet" href="/assets/dashboard.css?v=4">
 <script src="/assets/site.js?v=2" defer></script>
 </head>
 <body>
@@ -66,7 +66,7 @@
   </div>
 
   <!-- Overview: the head and the product window. Per-note figures come from omn.json and read
-       Pending until first issue; network figures and the Omnes Hashprice Index are live. -->
+       Pending until first issue; network figures are live. -->
   <section class="dash-top" id="note">
     <div class="wrap">
       <h1 class="dash-title">Omnes Mining Note</h1>
@@ -97,9 +97,8 @@
             <ul class="kv num" role="tabpanel" id="t-over" aria-labelledby="b-over">
               <li><span class="k">Bitcoin per note <span class="i" tabindex="0" role="button" aria-label="Bitcoin mined with the notes' hashrate, gross of pool fees, plus any Bitcoin paid in place of hashrate, divided by notes outstanding.">i<span class="tip" aria-hidden="true">Bitcoin mined with the notes' hashrate, gross of pool fees, plus any Bitcoin paid in place of hashrate, divided by notes outstanding.</span></span></span><span class="v" id="oPerNote"><span class="sk"></span></span></li>
               <li><span class="k">Mined</span><span class="v" id="oMined"><span class="sk"></span></span></li>
-              <li><span class="k">Current value per note <span class="i" tabindex="0" role="button" aria-label="Bitcoin per note × Bitcoin price, plus days left × Omnes Hashprice Index × 1 PH/s.">i<span class="tip" aria-hidden="true">Bitcoin per note × Bitcoin price, plus days left × Omnes Hashprice Index × 1 PH/s.</span></span></span><span class="v" id="oValue"><span class="sk"></span></span></li>
-              <li><span class="k">Current value, all notes</span><span class="v" id="oValueAll"><span class="sk"></span></span></li>
-              <li><span class="k">Omnes Hashprice Index <span class="i" tabindex="0" role="button" aria-label="Our own index of what 1 PH/s of hashrate earns in a day, computed live from public Bitcoin network data. See Method.">i<span class="tip" aria-hidden="true">Our own index of what 1 PH/s of hashrate earns in a day, computed live from public Bitcoin network data. See Method.</span></span></span><span class="v" id="oHashprice"><span class="sk"></span></span></li>
+              <li><span class="k">Value of Bitcoin per note <span class="i" tabindex="0" role="button" aria-label="Bitcoin per note × Bitcoin price. It is not the value of the note.">i<span class="tip" aria-hidden="true">Bitcoin per note × Bitcoin price. It is not the value of the note.</span></span></span><span class="v" id="oValue"><span class="sk"></span></span></li>
+              <li><span class="k">Value of Bitcoin, all notes</span><span class="v" id="oValueAll"><span class="sk"></span></span></li>
               <li><span class="k">Bitcoin price</span><span class="v" id="oPrice"><span class="sk"></span></span></li>
               <li><span class="k">Days left in term</span><span class="v" id="oDaysLeft"><span class="sk w3"></span></span></li>
             </ul>
@@ -121,7 +120,6 @@
               <li><span class="k">Tokenisation</span><span class="v">Tokeny S.à r.l.</span></li>
               <li><span class="k">Auditor</span><span class="v">PwC Luxembourg</span></li>
               <li><span class="k">Hashrate aggregator <span class="i" tabindex="0" role="button" aria-label="An Omnes affiliate.">i<span class="tip" aria-hidden="true">An Omnes affiliate.</span></span></span><span class="v">Omnes Technology AG</span></li>
-              <li><span class="k">Hashprice index</span><span class="v">Omnes Hashprice Index</span></li>
               <li><span class="k">Register of title</span><span class="v">Kept by the issuer</span></li>
               <li><span class="k">Onchain mirror</span><span class="v">Base</span></li>
             </ul>
@@ -132,7 +130,7 @@
             <div class="col-top">
               <div class="tabs" role="tablist" aria-label="Chart">
                 <button type="button" role="tab" aria-selected="true" data-series="btc">Bitcoin per note</button>
-                <button type="button" role="tab" aria-selected="false" data-series="value" tabindex="-1">Current value</button>
+                <button type="button" role="tab" aria-selected="false" data-series="value" tabindex="-1">Value of Bitcoin</button>
                 <button type="button" role="tab" aria-selected="false" data-series="hash" tabindex="-1">Hashrate delivered</button>
               </div>
             </div>
@@ -172,21 +170,10 @@
                 <div class="under num" id="fBtcSub">&nbsp;</div>
               </div>
               <div class="metric">
-                <span class="lbl" id="fValLbl">Current value per note</span>
-                <div class="val num"><span id="fVal"><span class="sk"></span></span><small>USD</small></div>
-                <div class="under" id="fValSub">Bitcoin held at today's price, plus the days left at the Omnes Hashprice Index</div>
-              </div>
-              <div class="metric">
                 <div class="term-top"><b class="num" id="kTerm"><span class="sk"></span></b><span class="num" id="kTermPct">&nbsp;</span></div>
                 <div class="bar-track" id="kBar" role="progressbar" aria-label="Share of term elapsed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="kBarFill"></i></div>
                 <div class="term-dates num"><span id="kStart">Commencement</span><span id="kEnd">Maturity</span></div>
               </div>
-              <details class="breakdown" open>
-                <summary>Value breakdown</summary>
-                <div class="row num"><span id="bBtc">Bitcoin held × Bitcoin price</span><span id="bBtcV"><span class="sk"></span></span></div>
-                <div class="row num"><span id="bDays">Days left × Omnes Hashprice Index ×&nbsp;1&nbsp;PH/s</span><span id="bDaysV"><span class="sk"></span></span></div>
-                <div class="row total num"><span>Current value</span><span id="bTot"><span class="sk"></span></span></div>
-              </details>
               <button class="btn btn-dark cta" type="button" data-csv="note" disabled>Download CSV <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
               <div class="asof" id="asOf">&nbsp;</div>
             </div>
@@ -219,14 +206,14 @@
     </div>
   </section>
 
-  <!-- Network, method, disclosures: live chain figures from mempool.space and the Omnes
-       Hashprice Index computed from them -->
+  <!-- Network, method, disclosures: live chain figures from mempool.space, or from its public
+       mirror mempool.emzy.de when mempool.space does not answer -->
   <section class="dash-sec" id="network">
     <div class="wrap">
       <div class="dsec-head">
         <div>
           <h2 class="dash-h2">Network and method</h2>
-          <p class="lead">Live Bitcoin network figures from mempool.space, refreshed every minute, with the method and disclosures behind this dashboard.</p>
+          <p class="lead">Live Bitcoin network figures from mempool.space, or its public mirror when mempool.space does not answer, refreshed every minute, with the method and disclosures behind this dashboard.</p>
         </div>
         <div class="seg" role="tablist" aria-label="Network, method and disclosures">
           <button type="button" role="tab" aria-selected="true" aria-controls="d-net" id="db-net">Network</button>
@@ -237,14 +224,6 @@
 
       <div role="tabpanel" id="d-net" aria-labelledby="db-net">
         <div class="stats num">
-          <div class="stat stat-index">
-            <span>Omnes Hashprice Index</span>
-            <div class="hp-pair">
-              <div><b id="nHp"><span class="sk"></span></b><small>USD per PH/s per day</small></div>
-              <div><b id="nHpBtc"><span class="sk"></span></b><small>BTC per PH/s per day</small></div>
-            </div>
-            <small class="hp-note">Our index, from public chain data</small>
-          </div>
           <div class="stat"><span>Bitcoin</span><b id="nPrice"><span class="sk"></span></b><small id="nPriceF">&nbsp;</small></div>
           <div class="stat"><span>Market cap</span><b id="nCap"><span class="sk"></span></b><small id="nCapF">&nbsp;</small></div>
           <div class="stat"><span>Network hashrate</span><b id="nHash"><span class="sk"></span></b><small id="nHashF">&nbsp;</small></div>
@@ -288,21 +267,16 @@
         <div class="formula">
           <div class="formula-bar"><b>How the figures are calculated</b><span>Per note</span></div>
           <dl>
-            <dt>Current value</dt><dd>Bitcoin per note × Bitcoin price, plus days left in term × Omnes Hashprice Index × 1 PH/s</dd>
+            <dt>Value of Bitcoin</dt><dd>Bitcoin per note × Bitcoin price. It is not the value of the note.</dd>
             <dt>Bitcoin per note</dt><dd>(Mined, gross of pool fees, plus paid in place of hashrate) ÷ notes outstanding</dd>
-            <dt>Term</dt><dd>730 days, counting the first and last day</dd>
-            <dt>Omnes Hashprice Index</dt><dd>144 × (block subsidy + average fees per block, last 144 blocks) ÷ network hashrate in PH/s × Bitcoin price, in USD per PH/s per day. Without the Bitcoin price, the same figure in BTC per PH/s per day.</dd>
+            <dt>Term</dt><dd>18 months, 548 days counting the first and last day</dd>
           </dl>
-          <div class="method-note">
-            <h3>The Omnes Hashprice Index</h3>
-            <p>Our own measure of what one petahash per second of hashrate earns in a day. It is computed in the page from public Bitcoin network data, refreshed every minute: the block subsidy and the average fees per block over the last 144 blocks, which is one day at the target block time; the network hashrate estimated by mempool.space over the last 1,008 blocks, about seven days; and the Bitcoin price from mempool.space. It is an estimate for information only.</p>
-          </div>
         </div>
       </div>
 
       <div role="tabpanel" id="d-disc" aria-labelledby="db-disc" hidden>
         <div class="disc">
-          <p>Current value per note is an indicative calculation. It assumes today's Omnes Hashprice Index level holds for the rest of the term, which it will not, it is before any costs or tax liabilities still to be paid, and it is not a price at which notes can be bought or sold. Returns are not guaranteed, and investors can lose some or all of their investment.</p>
+          <p>Value of Bitcoin per note is the Bitcoin held for each note at today's Bitcoin price. It is not the value of the note: it leaves out the Bitcoin still to be mined over the rest of the term and any costs or tax liabilities still to be paid, and it is not a price at which notes can be bought or sold. Returns are not guaranteed, and investors can lose some or all of their investment.</p>
           <p>OMN is not offered to US persons. Its offering documentation is available only to eligible professional investors, and noteholders receive the issuer's quarterly reports.</p>
         </div>
       </div>
@@ -344,8 +318,27 @@
   var phs = function (v) { return fmt(v, v % 1 ? 2 : 0) + " PH/s"; };
   var days = function (n) { return fmt(n, 0) + (n === 1 ? " day" : " days"); };
   var DAY = 864e5;
-  var API = "https://mempool.space/api";
-  var getJSON = function (p) { return fetch(API + p, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(p); return r.json(); }); };
+  // mempool.space first; if it does not answer within 8 seconds, a public mirror running the same
+  // mempool software. Whichever answered last is asked first next time.
+  var APIS = ["https://mempool.space/api", "https://mempool.emzy.de/api"], apiAt = 0;
+  var fetchFrom = function (base, p, asText) {
+    var ctl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, 8000) : null;
+    var done = function () { if (timer) clearTimeout(timer); };
+    return fetch(base + p, { cache: "no-store", signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { if (!r.ok) throw new Error(p); return asText ? r.text() : r.json(); })
+      .then(function (v) { done(); return v; }, function (e) { done(); throw e; });
+  };
+  var getFrom = function (p, asText) {
+    var start = apiAt;
+    var attempt = function (k) {
+      var i = (start + k) % APIS.length;
+      return fetchFrom(APIS[i], p, asText).then(function (v) { apiAt = i; return v; },
+        function (e) { if (k + 1 < APIS.length) return attempt(k + 1); throw e; });
+    };
+    return attempt(0);
+  };
+  var getJSON = function (p) { return getFrom(p, false); };
   var utc = function (iso) { return Date.parse(iso + "T00:00:00Z"); };
   var dateAs = function (o) { return function (t) { return new Date(t).toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); }; };
   var fmtDate = dateAs({ day: "numeric", month: "short", year: "numeric" });
@@ -359,10 +352,9 @@
     if (!/\/$/.test(p) && !/\.[a-z0-9]+$/i.test(p)) p += "/";
     return p.replace(/[^\/]*$/, "") + "omn.json";
   })();
-  var INDEX_NAME = "Omnes Hashprice Index";
   var TRANCHE_SIZE = ["US$50M"];     // Series 1, Tranche 1 is US$50,000,000
   var note = null, noteState = "loading";
-  var live = { ready: false, price: null, hashprice: null };
+  var live = { ready: false, price: null };
   var state = { s: "btc", days: 0, scope: "note" };
   var seriesOpen = true;
 
@@ -378,7 +370,7 @@
   // everything the note views need, derived once from omn.json
   function facts() {
     var f = { started: false, failed: noteState === "failed", perNote: null, mined: null, subst: 0, notes: null, perPh: null,
-              totalBtc: null, hashDelivered: null, term: null, asOf: null, history: [], ownIndex: false };
+              totalBtc: null, hashDelivered: null, term: null, asOf: null, history: [] };
     if (!note) return f;
     f.started = note.status === "live" || note.status === "matured";
     var per = note.btcPerNote || {};
@@ -388,8 +380,6 @@
     f.totalBtc = num(note.totalBtc) ? note.totalBtc : (f.perNote !== null && f.notes !== null ? f.perNote * f.notes : null);
     f.hashDelivered = num(note.hashrateDeliveredPh) ? note.hashrateDeliveredPh : null;
     f.asOf = note.asOf ? utc(note.asOf) : null;
-    // the daily index values in the history are used only when the file publishes the Omnes Hashprice Index
-    f.ownIndex = (note.hashpriceIndex || {}).source === INDEX_NAME;
     f.history = Array.isArray(note.history) ? note.history.filter(function (p) { return p && p.date && num(p.mined); }) : [];
     // the term runs 00:00 UTC on the commencement date to 23:59:59 UTC on the maturity date
     if (note.commencementDate && note.maturityDate) {
@@ -403,8 +393,6 @@
     }
     return f;
   }
-  // the Omnes Hashprice Index, live from public chain data (see Method): one figure across the page
-  function hashpriceFor() { return live.ready ? { v: live.hashprice } : { wait: true }; }
   var expected = function () { return note && note.expectedFirstIssueDate ? utc(note.expectedFirstIssueDate) : null; };
   var tranchesIssued = function () {
     var ds = note && Array.isArray(note.tranches) ? note.tranches.map(function (t) { return t.issueDate ? utc(t.issueDate) : null; }).filter(num) : [];
@@ -419,16 +407,11 @@
     var price = live.ready ? live.price : undefined;
     var liveVal = function (id, v, f) { if (v === undefined) return; if (v !== null) show(id, f(v)); else mark(id, "na"); };
     liveVal("oPrice", price, function (v) { return money(v, 0); });
-    var H = hashpriceFor();
-    if (!H.wait) {
-      if (H.v === null) mark("oHashprice", "na");
-      else { show("oHashprice", money(H.v, 2)); var u = document.createElement("small"); u.textContent = "per PH/s per day"; $("oHashprice").appendChild(u); }
-    }
-
+    // the value of the Bitcoin held: Bitcoin per note at today's price (not the value of the note)
     var value = null, valueWait = false, valueNa = false;
-    if (F.perNote !== null && F.term && F.perPh) {
-      if (!live.ready || H.wait) valueWait = true;
-      else if (price && H.v !== null) value = F.perNote * price + F.term.left * H.v * F.perPh;
+    if (F.perNote !== null) {
+      if (!live.ready) valueWait = true;
+      else if (price) value = F.perNote * price;
       else valueNa = true;
     }
     var valueState = function (id) { if (valueNa) mark(id, "na"); else if (!valueWait) mark(id, miss); };
@@ -448,7 +431,7 @@
       if (issued) show("sIssue", fmtDate(issued)); else mark("sIssue", miss);
       show("sTerm", days(F.term.total)); show("sEnd", fmtDate(F.term.end));
     } else {
-      if (note && num(note.termDays)) show("sTerm", days(note.termDays)); else mark("sTerm", miss);
+      if (note && num(note.termDays)) show("sTerm", (num(note.termMonths) ? note.termMonths + " months, " : "") + days(note.termDays)); else mark("sTerm", miss);
       mark("sEnd", miss, F.failed ? "" : "To be set");
       if (!F.failed && ex) show("sIssue", fmtDate(ex) + ", expected"); else mark("sIssue", miss);
     }
@@ -458,39 +441,23 @@
     if (F.hashDelivered !== null) show("cHash", phs(F.hashDelivered)); else mark("cHash", miss);
     if (F.totalBtc !== null) show("cHeld", fmt(F.totalBtc, 4) + " BTC"); else mark("cHeld", miss);
 
-    renderCard(F, value, valueWait, valueNa, miss, H);
+    renderCard(F, miss);
     renderSeries(F, miss);
     renderChartHead(F, value, valueWait, valueNa, miss);
     drawNoteChart(F);
   }
 
-  // the right pane: per note or all notes, the term, the value breakdown
-  function renderCard(F, value, valueWait, valueNa, miss, H) {
+  // the right pane: per note or all notes, and the term
+  function renderCard(F, miss) {
     var all = state.scope === "all", k = all ? F.notes : 1, ex = expected();
     var btc = F.perNote !== null && k !== null ? F.perNote * k : null;
-    var price = live.ready ? live.price : null, hp = H.wait ? null : H.v;
+    var price = live.ready ? live.price : null;
     $("fBtcLbl").textContent = all ? "Bitcoin held for all notes" : "Bitcoin held per note";
-    $("fValLbl").textContent = all ? "Current value of all notes" : "Current value per note";
     if (btc !== null) { show("fBtc", fmt(btc, all ? 4 : 8)); line("fBtcSub", price ? money(btc * price, 0) + " at today's Bitcoin price" : ""); }
     else {
       mark("fBtc", miss);
       line("fBtcSub", F.failed ? "" : F.started ? "The first daily figures are being reconciled" : ex ? "From first issue, expected " + fmtDate(ex) : "From first issue");
     }
-    var v = value !== null && k !== null ? value * k : null;
-    if (v !== null) { show("fVal", money(v, 0)); line("fValSub", (F.asOf !== null ? "Bitcoin as of " + fmtDate(F.asOf) : "Bitcoin at today's price") + ", plus " + days(F.term.left) + " left at the Omnes Hashprice Index"); }
-    else if (!valueWait) {
-      mark("fVal", valueNa || F.failed ? "na" : "pending");
-      line("fValSub", valueNa ? "Needs the live Bitcoin price and the Omnes Hashprice Index" : "Bitcoin held at today's price, plus the days left at the Omnes Hashprice Index");
-    }
-
-    // the breakdown shows the formula even before first issue
-    var ph = F.perPh && k !== null ? F.perPh * k : null;
-    if (btc !== null && price) { line("bBtc", fmt(btc, all ? 2 : 5) + " BTC × " + money(price, 0)); show("bBtcV", money(btc * price, 0)); }
-    else { line("bBtc", "Bitcoin held × Bitcoin price"); if (!valueWait) mark("bBtcV", valueNa ? "na" : miss); }
-    if (F.term && hp !== null && ph) { line("bDays", days(F.term.left) + " × " + money(hp, 2) + " × " + phs(ph)); show("bDaysV", money(F.term.left * hp * ph, 0)); }
-    else { line("bDays", "Days left × Omnes Hashprice Index ×\u00a0" + (ph ? phs(ph) : all ? "PH/s of all notes" : "1 PH/s").replace(/ /g, "\u00a0")); if (!valueWait) mark("bDaysV", valueNa ? "na" : miss); }
-    if (v !== null) show("bTot", money(v, 0)); else if (!valueWait) mark("bTot", valueNa ? "na" : miss);
-
     // the term
     var t = F.term;
     if (t) {
@@ -622,12 +589,11 @@
                tick: function (v) { return fmt(v, all ? (top >= 10 ? 0 : 2) : (top < 0.01 ? 4 : 3)); } };
     }
     if (state.s === "value") {
-      // each day's value: that day's Bitcoin at that day's price, plus the days then left at that
-      // day's Omnes Hashprice Index; only from a file that publishes our index
-      var rows = F.term && F.perPh && F.ownIndex ? h.filter(function (p) { return num(p.priceUsd) && p.priceUsd > 0 && num(p.hashpriceUsd); }) : [];
-      return { rows: rows, zero: false, label: "Current value" + (all ? ", all notes" : " per note"),
-               legend: [["#2f6bff", "Current value" + (all ? ", all notes" : " per note") + ", on each day's figures"]],
-               lines: [{ data: rows.map(function (p) { var left = Math.max(0, F.term.total - F.term.dayNo(utc(p.date))); return (total(p) * p.priceUsd + left * p.hashpriceUsd * F.perPh) * k; }), color: "#2f6bff" }],
+      // each day's Bitcoin at that day's price
+      var rows = h.filter(function (p) { return num(p.priceUsd) && p.priceUsd > 0; });
+      return { rows: rows, zero: false, label: "Value of Bitcoin" + (all ? ", all notes" : " per note"),
+               legend: [["#2f6bff", "Value of Bitcoin" + (all ? ", all notes" : " per note") + ", at each day's price"]],
+               lines: [{ data: rows.map(function (p) { return total(p) * p.priceUsd * k; }), color: "#2f6bff" }],
                tick: function (t) { return all ? "$" + fmt(t / 1e6, 0) + "M" : "$" + fmt(t / 1e3, 0) + "k"; } };
     }
     var hr = h.filter(function (p) { return num(p.hashratePh); });
@@ -644,7 +610,7 @@
         if (last) { var ref = h.filter(function (p) { return utc(p.date) <= utc(last.date) - 30 * DAY; }).pop(); if (ref) sub = signed((total(last) - total(ref)) * k, all ? 3 : 5) + " BTC over 30 days"; }
       } else mark("chartBig", miss);
     } else if (state.s === "value") {
-      if (value !== null) { show("chartBig", all ? compact(value * k) : money(value, 0)); sub = "Bitcoin at today's price, plus the days left at the Omnes Hashprice Index"; }
+      if (value !== null) { show("chartBig", all ? compact(value * k) : money(value, 0)); sub = "Bitcoin held at today's price"; }
       else if (!valueWait) mark("chartBig", valueNa ? "na" : miss);
     } else {
       if (F.hashDelivered !== null) {
@@ -678,7 +644,7 @@
     drawSvg(host, d.lines, { zero: d.zero, tick: d.tick, label: d.label, xl: function (q) { return xl(times[q]); } });
   }
 
-  /* ── live network, and the Omnes Hashprice Index computed from it ── */
+  /* ── live network ── */
   var supplyAt = function (h) { var t = 0, s = 50, l = h + 1; while (l > 0 && s >= 1e-8) { var n = Math.min(l, 210000); t += n * s; l -= n; s /= 2; } return t; };
   var put = function (id, v) { var el = $(id); if (el) el.textContent = v; };
   function loadLive() {
@@ -688,7 +654,7 @@
       getJSON("/v1/mining/reward-stats/144").catch(function () { return null; }),
       getJSON("/v1/prices").catch(function () { return null; }),
       getJSON("/v1/difficulty-adjustment").catch(function () { return null; }),
-      fetch(API + "/blocks/tip/height").then(function (r) { return r.ok ? r.text() : null; }).then(function (t) { var v = Number(t); return v > 0 ? v : null; }).catch(function () { return null; }),
+      getFrom("/blocks/tip/height", true).then(function (t) { var v = Number(t); return v > 0 ? v : null; }).catch(function () { return null; }),
       getJSON("/v1/historical-price?currency=USD&timestamp=" + yesterday).then(function (h) { var p = h.prices && h.prices[0] && h.prices[0].USD; return p > 0 ? p : null; }).catch(function () { return null; })
     ]).then(function (r) {
       var hr = r[0], rw = r[1], adj = r[3], height = r[4], dayAgo = r[5];
@@ -699,10 +665,8 @@
         var tot = Number(rw.totalReward) / 1e8, fee = Number(rw.totalFee) / 1e8;
         subsidy = (tot - fee) / blocks; avgFee = fee / blocks; perBlock = subsidy + avgFee; share = fee / tot;
       }
-      // the Omnes Hashprice Index: 144 × (subsidy + average fee, last 144 blocks) ÷ hashrate in PH/s, × price for USD
-      var netDay = perBlock !== null ? 144 * perBlock : null, btcPh = netDay !== null && hs ? netDay / (hs / 1e15) : null;
-      live.ready = true; live.price = p; live.hashprice = btcPh !== null && p ? btcPh * p : null;
-      put("nHp", live.hashprice !== null ? money(live.hashprice, 2) : "Unavailable"); put("nHpBtc", btcPh !== null ? fmt(btcPh, 8) : "Unavailable");
+      var netDay = perBlock !== null ? 144 * perBlock : null;
+      live.ready = true; live.price = p;
       put("nPrice", p ? money(p, 0) : "Unavailable");
       var pf = $("nPriceF"); if (p && dayAgo) { var c = (p / dayAgo - 1) * 100; pf.textContent = signed(c, 2) + "% in 24 hours"; pf.className = c >= 0 ? "up" : "dn"; } else pf.textContent = "";
       put("nCap", p && height ? compact(p * supplyAt(height)) : "Unavailable"); put("nCapF", height ? fmt(supplyAt(height), 0) + " BTC issued" : "");
@@ -714,6 +678,7 @@
       if (share !== null) { put("nFees", fmt(share * 100, 2) + "%"); put("nFeesF", "Average " + fmt(avgFee, 4) + " BTC per block"); } else { put("nFees", "Unavailable"); put("nFeesF", ""); }
       var ok = r.slice(0, 5).filter(Boolean).length;
       $("statusDot").className = "dot" + (ok === 5 ? "" : ok ? " stale" : " down");
+      $("statusText").title = ok ? "From " + APIS[apiAt].split("/")[2] : "";
       $("statusText").textContent = ok === 5 ? "Chain data live, " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : ok ? "Partial chain data" : "Chain data unavailable";
       renderNote();
     });
@@ -894,10 +859,10 @@
       var h = note && Array.isArray(note.history) ? note.history : [];
       if (!h.length) return;
       var bt = function (v) { return num(v) ? v.toFixed(8) : ""; }, u = function (v) { return num(v) ? v.toFixed(2) : ""; };
-      var rows = ["date,mined_btc_per_note,substitute_btc_per_note,total_btc_per_note,hashrate_delivered_ph,price_usd,hashprice_usd_per_ph_day"];
+      var rows = ["date,mined_btc_per_note,substitute_btc_per_note,total_btc_per_note,hashrate_delivered_ph,price_usd"];
       h.forEach(function (p) {
         var tot = num(p.mined) ? p.mined + (num(p.substitute) ? p.substitute : 0) : null;
-        rows.push([p.date, bt(p.mined), bt(p.substitute), bt(tot), u(p.hashratePh), u(p.priceUsd), u(p.hashpriceUsd)].join(","));
+        rows.push([p.date, bt(p.mined), bt(p.substitute), bt(tot), u(p.hashratePh), u(p.priceUsd)].join(","));
       });
       download("omn-series-1-daily.csv", rows);
     });
