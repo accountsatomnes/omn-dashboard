@@ -83,9 +83,9 @@
             </div>
             <ul class="kv num">
               <li><span class="k">Bitcoin per note <span class="i" tabindex="0" role="button" aria-label="Bitcoin mined for the notes, gross of pool fees, plus any Bitcoin paid in its place, divided by notes outstanding.">i<span class="tip" aria-hidden="true">Bitcoin mined for the notes, gross of pool fees, plus any Bitcoin paid in its place, divided by notes outstanding.</span></span></span><span class="v" id="oPerNote"><span class="sk"></span></span></li>
-              <li><span class="k">Mined</span><span class="v" id="oMined"><span class="sk"></span></span></li>
-              <li><span class="k">Value of Bitcoin per note <span class="i" tabindex="0" role="button" aria-label="Bitcoin per note × Bitcoin price. It is not the value of the note.">i<span class="tip" aria-hidden="true">Bitcoin per note × Bitcoin price. It is not the value of the note.</span></span></span><span class="v" id="oValue"><span class="sk"></span></span></li>
-              <li><span class="k">Value of Bitcoin, all notes</span><span class="v" id="oValueAll"><span class="sk"></span></span></li>
+              <li><span class="k">Current value per note <span class="i" tabindex="0" role="button" aria-label="Bitcoin per note × Bitcoin price, plus days left in term × current hashprice × 1 PH/s.">i<span class="tip" aria-hidden="true">Bitcoin per note × Bitcoin price, plus days left in term × current hashprice × 1 PH/s.</span></span></span><span class="v" id="oValue"><span class="sk"></span></span></li>
+              <li><span class="k">Current value, all notes</span><span class="v" id="oValueAll"><span class="sk"></span></span></li>
+              <li><span class="k">Current hashprice <span class="i" tabindex="0" role="button" aria-label="What 1 PH/s of hashrate earns in a day, from public Bitcoin network data. See Method.">i<span class="tip" aria-hidden="true">What 1 PH/s of hashrate earns in a day, from public Bitcoin network data. See Method.</span></span></span><span class="v" id="oHashprice"><span class="sk"></span></span></li>
               <li><span class="k">Bitcoin price</span><span class="v" id="oPrice"><span class="sk"></span></span></li>
               <li><span class="k">Days left in term</span><span class="v" id="oDaysLeft"><span class="sk w3"></span></span></li>
             </ul>
@@ -194,16 +194,17 @@
         <div class="formula">
           <div class="formula-bar"><b>How the figures are calculated</b><span>Per note</span></div>
           <dl>
-            <dt>Value of Bitcoin</dt><dd>Bitcoin per note × Bitcoin price. It is not the value of the note.</dd>
+            <dt>Current value</dt><dd>Bitcoin per note × Bitcoin price, plus days left in term × current hashprice × 1 PH/s</dd>
             <dt>Bitcoin per note</dt><dd>(Mined, gross of pool fees, plus any Bitcoin paid in its place) ÷ notes outstanding</dd>
             <dt>Term</dt><dd>18 months, 548 days counting the first and last day</dd>
+            <dt>Current hashprice</dt><dd>144 × (block subsidy + average fees per block, last 144 blocks) ÷ network hashrate in PH/s × Bitcoin price, in USD per PH/s per day. The network hashrate is mempool.space's estimate over the last 1,008 blocks, about seven days. It is an estimate for information only.</dd>
           </dl>
         </div>
       </div>
 
       <div role="tabpanel" id="d-disc" aria-labelledby="db-disc" hidden>
         <div class="disc">
-          <p>Value of Bitcoin per note is the Bitcoin held for each note at today's Bitcoin price. It is not the value of the note: it leaves out the Bitcoin still to be mined over the rest of the term and any costs or tax liabilities still to be paid, and it is not a price at which notes can be bought or sold. Returns are not guaranteed, and investors can lose some or all of their investment.</p>
+          <p>Current value per note is an indicative calculation. It assumes today's hashprice holds for the rest of the term, which it will not; it is before any costs or tax liabilities still to be paid; and it is not a price at which notes can be bought or sold. Returns are not guaranteed, and investors can lose some or all of their investment.</p>
           <p>OMN is not offered to US persons. Its offering documentation is available only to eligible professional investors, and noteholders receive the issuer's quarterly reports.</p>
         </div>
       </div>
@@ -280,7 +281,8 @@
   })();
   var TRANCHE_SIZE = ["US$50M"];     // Series 1, Tranche 1 is US$50,000,000
   var note = null, noteState = "loading";
-  var live = { ready: false, price: null };
+  var live = { ready: false, price: null, hashprice: null };
+  var PH_PER_NOTE = 1;   // each note's notional hashrate allocation, 1 PH/s
   var state = { days: 0, scope: "note" };
   var seriesOpen = true;
 
@@ -327,20 +329,24 @@
     var price = live.ready ? live.price : undefined;
     var liveVal = function (id, v, f) { if (v === undefined) return; if (v !== null) show(id, f(v)); else mark(id, "na"); };
     liveVal("oPrice", price, function (v) { return money(v, 0); });
-    // the value of the Bitcoin held: Bitcoin per note at today's price (not the value of the note)
+    // overview
+    if (F.perNote !== null) show("oPerNote", fmt(F.perNote, 5) + " BTC"); else mark("oPerNote", miss);
+    // current value, as BMN2 states it: Bitcoin per note × Bitcoin price, plus days left × current
+    // hashprice × 1 PH/s; it waits for the first network load
+    var hp = live.ready ? live.hashprice : undefined;
     var value = null, valueWait = false, valueNa = false;
-    if (F.perNote !== null) {
+    if (F.perNote !== null && F.term) {
       if (!live.ready) valueWait = true;
-      else if (price) value = F.perNote * price;
+      else if (price && hp) value = F.perNote * price + F.term.left * hp * PH_PER_NOTE;
       else valueNa = true;
     }
     var valueState = function (id) { if (valueNa) mark(id, "na"); else if (!valueWait) mark(id, miss); };
-
-    // overview
-    if (F.perNote !== null) { show("oPerNote", fmt(F.perNote, 5) + " BTC"); show("oMined", fmt(F.mined, 5) + " BTC"); show("oSubst", fmt(F.subst, 5) + " BTC"); }
-    else { mark("oPerNote", miss); mark("oMined", miss); mark("oSubst", miss); }
     if (value !== null) show("oValue", money(value, 0)); else valueState("oValue");
-    if (value !== null && F.notes !== null) show("oValueAll", compact(value * F.notes)); else valueState("oValueAll");
+    if (value !== null && F.notes !== null) show("oValueAll", money(value * F.notes, 0)); else valueState("oValueAll");
+    if (hp !== undefined) {
+      if (hp === null) mark("oHashprice", "na");
+      else { show("oHashprice", money(hp, 2)); var u = document.createElement("small"); u.textContent = "per PH/s per day"; $("oHashprice").appendChild(u); }
+    }
     if (F.term) show("oDaysLeft", fmt(F.term.left, 0)); else mark("oDaysLeft", miss);
 
     // the head figures
@@ -512,7 +518,7 @@
   function loadLive() {
     var yesterday = Math.floor(Date.now() / 1000) - 86400;
     return Promise.all([
-      getJSON("/v1/mining/hashrate/3d").catch(function () { return null; }),   // read for the difficulty only
+      getJSON("/v1/mining/hashrate/3d").catch(function () { return null; }),   // network hashrate (for the hashprice) and difficulty
       getJSON("/v1/mining/reward-stats/144").catch(function () { return null; }),
       getJSON("/v1/prices").catch(function () { return null; }),
       getJSON("/v1/difficulty-adjustment").catch(function () { return null; }),
@@ -521,14 +527,16 @@
     ]).then(function (r) {
       var hr = r[0], rw = r[1], adj = r[3], height = r[4], dayAgo = r[5];
       var p = r[2] && r[2].USD > 0 ? r[2].USD : null;
-      var diff = hr && hr.currentDifficulty > 0 ? hr.currentDifficulty : null;
+      var hs = hr && hr.currentHashrate > 0 ? hr.currentHashrate : null, diff = hr && hr.currentDifficulty > 0 ? hr.currentDifficulty : null;
       var blocks = rw ? rw.endBlock - rw.startBlock + 1 : 0, perBlock = null, subsidy = null, avgFee = null, share = null;
       if (rw && blocks > 0 && Number(rw.totalReward) > 0) {
         var tot = Number(rw.totalReward) / 1e8, fee = Number(rw.totalFee) / 1e8;
         subsidy = (tot - fee) / blocks; avgFee = fee / blocks; perBlock = subsidy + avgFee; share = fee / tot;
       }
       var netDay = perBlock !== null ? 144 * perBlock : null;
-      live.ready = true; live.price = p;
+      // current hashprice: 144 × (subsidy + average fee, last 144 blocks) ÷ hashrate in PH/s, × price, USD per PH/s per day
+      var btcPh = netDay !== null && hs ? netDay / (hs / 1e15) : null;
+      live.ready = true; live.price = p; live.hashprice = btcPh !== null && p ? btcPh * p : null;
       put("nPrice", p ? money(p, 0) : "Unavailable");
       var pf = $("nPriceF"); if (p && dayAgo) { var c = (p / dayAgo - 1) * 100; pf.textContent = signed(c, 2) + "% in 24 hours"; pf.className = c >= 0 ? "up" : "dn"; } else pf.textContent = "";
       put("nCap", p && height ? compact(p * supplyAt(height)) : "Unavailable"); put("nCapF", height ? fmt(supplyAt(height), 0) + " BTC issued" : "");
