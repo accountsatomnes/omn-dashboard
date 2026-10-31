@@ -3,23 +3,21 @@
    (.btn, .btn-dark), the capsule nav and its menu, the navy footer, the status .dot and the
    .sk skeleton. This file adds only the dashboard: Inter with tabular figures for every figure,
    Source Serif 4 for the h1 and the section h2s, charts in the accent blue family, and hairlines
-   rather than heavy borders or shadows. The only containers are the product window, the series
-   table and the hashrate and difficulty chart; everything else sits open on the canvas.
+   rather than heavy borders or shadows. The only containers are the product window and the series
+   table; everything else sits open on the canvas.
 
    Index
    D01 Tokens       dashboard-only: --dn (a falling figure), --pane (window and panel edge)
-   D02 Page         anchor scrolling under the nav and the switcher, tabular figures, rhythm
-   D03 Switcher     .subnav: the section switcher capsule that follows the page
-   D04 Head         .dash-top: the serif .dash-title, the lead, .figs (open figures, hairlines)
+   D02 Page         anchor scrolling under the nav, tabular figures, rhythm
+   D04 Head         .dash-top (clear of the capsule nav): the serif .dash-title, the lead, .figs (open figures, hairlines)
    D05 Window       .window, .window-bar (label, live .dot), .dash: three panes split by hairlines
-   D06 Controls     .tabs (soft grey pills), .seg (the black pill on soft grey), .icon-btn, .i
+   D06 Controls     .tabs (soft grey pills), .tab-label (a pane's title as the chosen pill), .seg (the black pill on soft grey), .icon-btn, .i
    D07 Facts        .kv rows in the left pane
-   D08 Chart        .chart-head, .chart-big, .chart (the SVG), .legend
+   D08 Chart        .chart-top (title, range and download on one line), .chart (the SVG)
    D09 Card         the right pane: open .metric blocks, the term bar, the CSV button
    D10 Sections     .dsec-head: a serif .dash-h2 beside figures or a segmented control
    D11 Series       .dpanel (white, hairline) and .series-table with expandable tranches
-   D12 Network      .stats: eight live figures in an open hairline grid; .hd: hashrate and
-                    difficulty panel with its tip, brush and note
+   D12 Network      .stats: seven live figures in an open hairline grid, the last one wide
    D13 Method       .formula: open definition rows between hairlines; .disc disclosures
    D14 States       .is-pending and .is-na slots (Pending before first issue, Unavailable),
                     the per-note chart's empty state, disabled controls
@@ -35,24 +33,16 @@
 }
 
 /* D02 Page ──────────────────────────────────────────────────────────── */
-html { scroll-behavior: smooth; scroll-padding-top: 164px; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(14px + var(--nav-h) + 24px); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 .dash-page { font-variant-numeric: tabular-nums; }
 .dash-sec { padding-top: clamp(88px, 8vw, 120px); }
 .dash-sec:last-child { padding-bottom: clamp(80px, 7.4vw, 108px); }
 [role="tabpanel"][hidden] { display: none; }
 
-/* D03 Switcher ──────────────────────────────────────────────────────── */
-/* A small capsule in the nav's material that follows the page, held clear of the capsule nav
-   (its 14px top gap, its height, then 18px of air); the section in view is the light-blue pill. */
-.subnav-wrap { position: sticky; top: calc(14px + var(--nav-h) + 18px); z-index: 40; display: flex; justify-content: center; margin-top: calc(14px + var(--nav-h) + 34px); pointer-events: none; }
-.subnav { pointer-events: auto; display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .88); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(23, 25, 28, .03), 0 10px 30px -14px rgba(30, 60, 100, .16); -webkit-backdrop-filter: saturate(160%) blur(18px); backdrop-filter: saturate(160%) blur(18px); }
-.subnav a { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 999px; font-size: 14px; color: #3a3f45; transition: background .18s ease, color .18s ease; }
-.subnav a:hover { background: var(--soft); color: var(--ink); }
-.subnav a[aria-current] { background: var(--tint); color: var(--tint-ink); font-weight: 500; }
-
 /* D04 Head ──────────────────────────────────────────────────────────── */
-.dash-top { padding-top: 40px; text-align: center; }
+/* the head clears the capsule nav: its 14px top gap, its height, then the page's own air */
+.dash-top { padding-top: calc(14px + var(--nav-h) + 74px); text-align: center; }
 .dash-title { max-width: 820px; margin: 0 auto; font-family: var(--serif); font-optical-sizing: auto; font-weight: 300; font-size: clamp(40px, 4.9vw, 68px); line-height: 1.06; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
 .dash-top .lead { max-width: 600px; margin: 22px auto 0; text-wrap: pretty; }
 /* figures: open, label over value, split by hairlines (the homepage's hero terms) */
@@ -79,6 +69,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 164px; }
 .tabs [role="tab"] { height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; color: var(--muted); white-space: nowrap; transition: background .18s ease, color .18s ease; }
 .tabs [role="tab"]:hover { background: var(--soft); color: var(--ink); }
 .tabs [role="tab"][aria-selected="true"] { background: var(--soft-2); color: var(--ink); font-weight: 500; }
+.tab-label { display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--soft-2); font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; }
 .seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--soft); }
 .seg button { height: 30px; padding: 0 13px; border-radius: 999px; font-size: 13px; color: var(--muted); white-space: nowrap; transition: background .18s ease, color .18s ease; }
 .seg button:hover { color: var(--ink); }
@@ -92,7 +83,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 164px; }
 .i { flex: none; display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--tint); color: var(--tint-ink); font-size: 10px; font-weight: 600; line-height: 1; cursor: help; }
 .i:focus-visible { outline-offset: 2px; border-radius: 50%; }
 /* focus rings follow the pill */
-.tabs [role="tab"]:focus-visible, .seg button:focus-visible, .subnav a:focus-visible, .icon-btn:focus-visible, .cta:focus-visible, .fam:focus-visible { outline-offset: 2px; border-radius: 999px; }
+.tabs [role="tab"]:focus-visible, .seg button:focus-visible, .icon-btn:focus-visible, .cta:focus-visible, .fam:focus-visible { outline-offset: 2px; border-radius: 999px; }
 
 /* D07 Facts ─────────────────────────────────────────────────────────── */
 .kv { padding: 6px 22px 18px; }
@@ -111,16 +102,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 164px; }
 
 /* D08 Chart ─────────────────────────────────────────────────────────── */
 .d-chart { display: flex; flex-direction: column; }
-.chart-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 16px; padding: 22px 24px 0; }
-.chart-big { font-size: 38px; font-weight: 400; line-height: 1.08; letter-spacing: -0.028em; }
-.chart-sub { margin-top: 8px; max-width: 420px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.chart-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 12px; }
 .tools { display: flex; align-items: center; gap: 8px; }
 .chart { position: relative; flex: 1 1 0; min-height: 330px; }
 .chart-plot { position: absolute; inset: 0; }
 .chart svg { position: absolute; top: 6px; left: 12px; width: calc(100% - 24px); height: calc(100% - 16px); }
 .chart text { font-variant-numeric: tabular-nums; }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 0 24px 22px; font-size: 12.5px; color: var(--muted); }
-.legend i { display: inline-block; width: 14px; height: 3px; margin-right: 7px; border-radius: 2px; vertical-align: middle; }
 
 /* D09 Card ──────────────────────────────────────────────────────────── */
 /* The right pane, open: figures in blocks between hairlines, no inner boxes. */
@@ -176,34 +163,12 @@ tr.child[hidden] { display: none; }
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
 .stat { min-width: 0; padding: 20px 20px 22px; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); }
 .stat:nth-child(1), .stat:nth-child(5) { padding-left: 0; border-left: 0; }
+.stat:last-child { grid-column: span 2; }
 .stat > span { display: block; margin-bottom: 8px; font-size: 13px; line-height: 1.4; color: var(--muted); }
 .stat b { display: block; font-size: 24px; font-weight: 400; line-height: 1.2; letter-spacing: -0.022em; }
 .stat small { display: block; margin-top: 6px; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
 .stat small.up { color: var(--tint-ink); }
 .stat small.dn { color: var(--dn); }
-/* hashrate and difficulty */
-.hd { margin-top: 36px; padding: 22px 24px 6px; }
-.hd-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
-.hd-head h3 { font-size: 18px; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; }
-.hd-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.hd .legend { padding: 14px 0 0; }
-.hd-box { position: relative; height: 340px; margin-top: 8px; cursor: crosshair; }
-.hd-box:focus-visible { outline-offset: 4px; }
-.hd-box canvas, .brush canvas { display: block; width: 100%; height: 100%; }
-.hd-empty { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; color: var(--muted); }
-.hd-empty[hidden] { display: none; }
-.hd-tip { position: absolute; top: 10px; left: 0; z-index: 3; min-width: 220px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, .96); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(23, 25, 28, .04), 0 14px 34px -14px rgba(30, 60, 100, .22); font-size: 13px; line-height: 1.6; pointer-events: none; }
-.hd-tip[hidden] { display: none; }
-.hd-tip b { display: block; margin-bottom: 4px; font-weight: 500; }
-.hd-tip span { display: flex; align-items: center; gap: 8px; white-space: nowrap; color: var(--muted); }
-.hd-tip em { margin-left: auto; padding-left: 14px; font-style: normal; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; }
-.hd-tip i { flex: none; width: 8px; height: 8px; border-radius: 50%; }
-.brush { position: relative; height: 44px; margin: 12px 0 8px; border-radius: 12px; background: var(--soft); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
-.brush-win { position: absolute; top: 0; bottom: 0; background: rgba(47, 107, 255, .1); box-shadow: inset 2px 0 0 var(--accent), inset -2px 0 0 var(--accent); cursor: grab; }
-.brush-win .h { position: absolute; top: 50%; width: 10px; height: 22px; margin-top: -11px; border-radius: 999px; background: var(--paper); box-shadow: 0 0 0 1px var(--line-strong), 0 2px 6px rgba(23, 25, 28, .12); cursor: ew-resize; }
-.brush-win .h.l { left: -4px; }
-.brush-win .h.r { right: -4px; }
-.hd-note { padding: 2px 0 16px; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
 
 /* D13 Method ────────────────────────────────────────────────────────── */
 .formula-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 12px; padding-bottom: 16px; font-size: 13.5px; color: var(--muted); }
@@ -242,18 +207,17 @@ tr.child[hidden] { display: none; }
 .menu > a[aria-current="page"]::after { content: ""; margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(47, 107, 255, .16); }
 
 /* D16 Responsive ────────────────────────────────────────────────────── */
-/* Inter sets wider than the old face, so the facts pane drops below a little sooner to keep the
-   chart's tabs on one line */
+/* the facts pane drops below a little sooner, to keep the chart's title and controls on one line */
 @media (max-width: 1239px) {
   .dash { grid-template-columns: minmax(0, 1fr) 352px; }
   .d-over { grid-column: 1 / -1; order: 3; }
 }
 @media (max-width: 1100px) {
-  /* three across: two rows of three, then the last two, the last one wide */
+  /* three across: two rows of three, then the last one across */
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .stat:nth-child(5) { padding-left: 20px; border-left: 1px solid var(--line); }
   .stat:nth-child(3n+1) { padding-left: 0; border-left: 0; }
-  .stat:last-child { grid-column: span 2; }
+  .stat:last-child { grid-column: 1 / -1; }
 }
 @media (max-width: 820px) {
   .dash { grid-template-columns: minmax(0, 1fr); }
@@ -262,9 +226,6 @@ tr.child[hidden] { display: none; }
 }
 @media (max-width: 640px) {
   .chart { min-height: 260px; }
-  .chart-big { font-size: 31px; }
-  .hd { padding: 16px 14px 4px; }
-  .hd-box { height: 280px; }
   .kv { padding: 6px 18px 16px; }
   .card-body { padding: 4px 18px 18px; }
   .formula dl { grid-template-columns: minmax(0, 1fr); }
@@ -273,15 +234,14 @@ tr.child[hidden] { display: none; }
 }
 @media (max-width: 620px) {
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* two across: four rows of two */
+  /* two across: three rows of two, then the last one across */
   .stat, .stat:nth-child(n) { padding: 16px 0 18px 16px; border-left: 1px solid var(--line); }
   .stat:nth-child(odd) { padding-left: 0; padding-right: 14px; border-left: 0; }
-  .stat:last-child { grid-column: auto; }
+  .stat:last-child { grid-column: 1 / -1; }
   .stat b { font-size: 21px; }
 }
 @media (max-width: 599px) {
-  .subnav-wrap { top: calc(10px + var(--nav-h) + 14px); margin-top: calc(10px + var(--nav-h) + 26px); }
-  .dash-top { padding-top: 32px; }
+  .dash-top { padding-top: calc(10px + var(--nav-h) + 56px); }
   .dash-top .lead { margin-top: 18px; }
   /* figures become a short specification list */
   .figs { flex-direction: column; margin-top: 28px; text-align: left; }
